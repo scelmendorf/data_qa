@@ -1,0 +1,110 @@
+---
+title: "4. Data in range"
+---
+
+Sensible data ranges are often easy to define based on biological principles (elephants are heavy!; mosquitoes are light!) or mathematical principles (percents must be bounded between 0 and 100).
+
+```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
+#install packages
+packReq <- c("tidyverse",
+             "summarytools") 
+
+# Install and load all required packages
+lapply(packReq, function(x) {
+  print(x)
+  if (require(x, character.only = TRUE) == FALSE) {
+    install.packages(x)
+    library(x, character.only = TRUE)
+  }})
+
+```
+
+Load packages
+
+```{r load packages, message=FALSE, warning=FALSE}
+library (tidyverse) #general data wrangling
+library (summarytools)
+```
+
+If you have already completed [module 1](data_types.qmd) you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED is provided here.
+
+```{r read data}
+df <-read.csv ('example_data/sunflower_data_1.csv')
+
+```
+
+We can use the tidyverse package to make ourselves a quick table of ranges to scan.
+
+```{r table data ranges}
+
+min_max <- df %>%
+  #select(all_of(num_vars))%>%
+  select(where(is.numeric)) %>%
+  pivot_longer(cols= everything()) %>%
+  group_by(name) %>%
+  summarize_at('value', list(min = ~ min(.x, na.rm = TRUE), max = ~max (.x, na.rm = TRUE)))
+
+```
+
+```{r display data ranges, echo = FALSE}
+knitr::kable(head (min_max, 10), digits = 2)
+```
+
+If you completed [module 2](missing_data.qmd) you will recall that the summarytools package also gives us this information (and more!) in the Stats/Values column.
+
+```{r view summary, eval = FALSE}
+view(dfSummary(df))
+
+```
+
+```{r render summary, eval = TRUE, results = 'asis', style = "grid", echo = FALSE}
+print(dfSummary(df, 
+                varnumbers   = FALSE,
+                valid.col    = FALSE,
+                graph.magnif = 0.76),
+      method = 'render')
+
+
+```
+
+Often a visual assessment is key to figuring out what is wrong. Most biological data are normally or lognormally distributed. What is that suspect lump of data in **height_in**?
+
+```{r inspect odd data }
+
+too_tall <- df %>%
+  #filter on values >3d greater than the mean
+  filter(height_in > 62.2 + 19.6*3)
+
+
+```
+
+```{r display tall data, echo = FALSE}
+knitr::kable(head (too_tall, 10), digits = 2)
+```
+
+All appear to be from a single year, which is either (a) the tallest year in sunflower history or (b) a coding error. Perhaps the data were recorded in centimeters instead of inches?
+
+```{r could it be centimeters }
+#
+not_too_tall = df %>%
+  anti_join(., too_tall)
+
+mean(not_too_tall$height_in, na.rm = TRUE)
+mean(too_tall$height_in, na.rm = TRUE)
+
+#does converting to cm to inches fix the problem?
+mean(too_tall$height_in, na.rm = TRUE)/2.54
+
+```
+
+It is always best to double check your field notes, your assistants field notes etc to verify your assumptions when correcting data after the fact! But sometimes, the unit errors are pretty easy to detect and erroneous data can be easily corrected after the fact. 
+
+```{r fix data}
+
+too_tall = too_tall %>%
+  mutate(height_in = height_in/2.54)
+
+df = bind_rows(too_tall, not_too_tall)
+
+```
+Carry on and be merry!

@@ -12,13 +12,17 @@ website:
       - section: "Overview"
         contents:
         - index.qmd
-      - section: "Basics"
+      - section: "Data Types"
         contents:
           - data_types.qmd
-      - section: "Layout"
+      - section: "Too much or two little"
         contents:
           - missing_data.qmd   
-          
+          - duplicate_data.qmd 
+      - section: "Wrong data"
+        contents:
+          - data_in_range.qmd  
+          - spelling.qmd 
 
 
 

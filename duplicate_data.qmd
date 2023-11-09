@@ -1,0 +1,66 @@
+---
+title: "3. Duplicated Data"
+---
+
+Sometimes duplicate data are expected, but duplicate data can also occur due to transcription errors or mislabeled samples. Use your knowledge of the sampling design to inform what duplicates you expect!
+
+```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
+# install packages
+packReq <- c(
+  "tidyverse",
+  "summarytools",
+  "janitor"
+)
+
+# Install and load all required packages
+lapply(packReq, function(x) {
+  print(x)
+  if (require(x, character.only = TRUE) == FALSE) {
+    install.packages(x)
+    library(x, character.only = TRUE)
+  }
+})
+```
+
+Load packages
+
+```{r load packages, message=FALSE, warning=FALSE}
+library(tidyverse) # general data wrangling
+library(summarytools)
+library(janitor)
+```
+
+If you have already completed [module 1](data_types.qmd) you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED is provided here.
+
+```{r read data}
+df <- read.csv("example_data/sunflower_data_1.csv")
+```
+
+The summarytools package introduced in [module 2](missing_data.qmd) includes information on the number of complete duplicates (all values identical) in our dataset. We can also get this information from one line of code.
+
+```{r ct duplicates, eval = TRUE}
+sum(duplicated(df))
+```
+
+But what if we understood that each hybrid was only planted once per year? We might then want the count of instances where combinations of year and hybrid are duplicated.
+
+```{r ct duplicates by hybrid year, eval = TRUE}
+sum(duplicated(df %>%
+  select(year, hybrid)))
+```
+
+Note that the `duplicated` functions considers anything after the first instance to be a duplicate, some of these may be triplicates or quadriplicates!! So a count of 4 here might mean one combination that exists 5 times, or 4 pairs, or one triplicate and one duplicate.
+
+For more advanced duplicate sleuthing, check out the [janitor](https://cran.r-project.org/web/packages/janitor/vignettes/janitor.html) package. The `get_dupes` function returns the rows that are duplicated and inserts a count of the duplicates. This suite of functions can be very helpful in sussing out why duplicates are occurring and what to do with them.
+
+```{r dupes}
+these_dupes <- get_dupes(df, year, hybrid)
+```
+
+```{r view dupes, eval = FALSE}
+View(these_dupes)
+```
+
+```{r display ct, echo = FALSE}
+knitr::kable(these_dupes, digits = 2)
+```

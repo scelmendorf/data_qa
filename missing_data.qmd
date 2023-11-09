@@ -1,8 +1,8 @@
 ---
-title: "2. Missing Data"
+title: "4. Data in range"
 ---
 
-Missing data are pervasive in ecology. Sometimes you just didn't get out to the field. Sometimes a precious page of data blew away. Sometimes someone forgot to enter it, or it was inadvertently deleted. Those can often be fixed. Last, it's important to understand the missingness in your data in order to appropriately tailor you analyses. Data that are missing completely at random [MCAR](https://stefvanbuuren.name/fimd/sec-MCAR.html) can often safely be ignored in analyses, while cases of non-random missing data need to have adjusted analyses (e.g. for community survey data, species not found may need to be treated as 0 rather than NA; individuals that were too heavy to weigh may require a particular analytical method).
+Sensible data ranges are often easy to define based on biological principles (elephants are heavy!; mosquitoes are light!) or mathematical principles (percents must be bounded between 0 and 100)
 
 ```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
 #install packages
@@ -66,7 +66,6 @@ print(dfSummary(df,
 
 ```
 
-
 Knowing more about the intended sampling design will tell us what other missing values should we look for. For example, were data collected every year? If so examining the years included in the dataset may be important.
 
 Sometimes a visual check is easy to spot what is missing
@@ -76,6 +75,7 @@ sort (unique (df$year))
 ```
 
 Sometimes it's hard to find exactly what is missing! `setdiff` (for simple checks for expected values based on complete sets) `expand.grid` (for checking pre-defined combinations) and the `padr` (for padding out dataset based on regular temporal frequency) are your friends here. As an example, I can use the simple code below to figure out what years are missing. It is then up to you whether it is important to add those years with NA values, or just carry on knowing they are missing.
+
 ```{r check for all years using setdiff}
 setdiff(seq(min(df$year), max(df$year)), unique(df$year))
 ```
@@ -87,9 +87,9 @@ ct_by_year = df %>%
   group_by(year) %>%
   tally()
 ```
+
 Viewing just the first 10 years, sampling appears very uneven, is this expected?
 
 ```{r display ct, echo = FALSE}
 knitr::kable(head (ct_by_year, 10), digits = 2)
 ```
-

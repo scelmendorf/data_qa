@@ -167,7 +167,7 @@ Finally, we can remove the temporary columns we created, and set all our remaini
 numeric_cols <- c("harvest_moisture_pct","height_in" ,"yield_lb_acre")      
 
 df <- df %>%
-  select(-yyyymmdd, -mdy, -planting_date_original) %>%
+  select(-yyyymmdd, -mdy, -planting_date_original, -X) %>%
   rename(planting_date = planting_date_corrected) %>%
          #while we are at it let's rename everything to lower case as 
          #variable capitalization is annoying and hard to remember
@@ -178,6 +178,6 @@ df <- df %>%
 
 glimpse(df)
 
-write.csv(df, 'example_data/sunflower_data_1.csv')
+write.csv(df, 'example_data/sunflower_data_1.csv', row.names = FALSE)
 ```
 
