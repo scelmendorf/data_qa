@@ -17,7 +17,8 @@ website:
           - data_types.qmd
       - section: "Layout"
         contents:
-          - missing.qmd       
+          - missing_data.qmd   
+          
 
 
 

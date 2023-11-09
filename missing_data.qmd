@@ -1,0 +1,95 @@
+---
+title: "2. Missing Data"
+---
+
+Missing data are pervasive in ecology. Sometimes you just didn't get out to the field. Sometimes a precious page of data blew away. Sometimes someone forgot to enter it, or it was inadvertently deleted. Those can often be fixed. Last, it's important to understand the missingness in your data in order to appropriately tailor you analyses. Data that are missing completely at random [MCAR](https://stefvanbuuren.name/fimd/sec-MCAR.html) can often safely be ignored in analyses, while cases of non-random missing data need to have adjusted analyses (e.g. for community survey data, species not found may need to be treated as 0 rather than NA; individuals that were too heavy to weigh may require a particular analytical method).
+
+```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
+#install packages
+packReq <- c("tidyverse",
+             "summarytools") 
+
+# Install and load all required packages
+lapply(packReq, function(x) {
+  print(x)
+  if (require(x, character.only = TRUE) == FALSE) {
+    install.packages(x)
+    library(x, character.only = TRUE)
+  }})
+
+```
+
+Load packages
+
+```{r load packages, message=FALSE, warning=FALSE}
+library (tidyverse) #general data wrangling
+library (summarytools)
+```
+
+If you have already completed [module 1](data_types.qmd) you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED is provided here.
+
+```{r read data}
+df <-read.csv ('example_data/sunflower_data_1.csv')
+
+```
+
+The summarytools package can give us a nice overview of our dataset, including the percent of missing values (NAs) recorded in each variable.
+
+```{r view summary, eval = FALSE}
+view(dfSummary(df))
+
+```
+
+```{r render summary, eval = TRUE, results = 'asis', style = "grid", echo = FALSE}
+# mytable<- dfSummary(df,
+#           plain.ascii  = FALSE,
+#           style        = 'grid',
+#           graph.magnif = 0.85,
+#           varnumbers = FALSE,
+#           valid.col    = FALSE) #,
+#           #tmp.img.dir  = "/tmp")
+# 
+# knitr::kable(mytable, format = 'html')
+
+print(dfSummary(df, 
+                varnumbers   = FALSE,
+                valid.col    = FALSE,
+                graph.magnif = 0.76),
+      method = 'render')
+
+#knitr::kable(mytable, format = 'html')
+# print(dfSummary(df, 
+#                 varnumbers   = FALSE, 
+#                 valid.col    = FALSE, 
+#                 graph.magnif = 0.76),
+#       method = 'render')
+
+```
+
+
+Knowing more about the intended sampling design will tell us what other missing values should we look for. For example, were data collected every year? If so examining the years included in the dataset may be important.
+
+Sometimes a visual check is easy to spot what is missing
+
+```{r check for all years}
+sort (unique (df$year))
+```
+
+Sometimes it's hard to find exactly what is missing! `setdiff` (for simple checks for expected values based on complete sets) `expand.grid` (for checking pre-defined combinations) and the `padr` (for padding out dataset based on regular temporal frequency) are your friends here. As an example, I can use the simple code below to figure out what years are missing. It is then up to you whether it is important to add those years with NA values, or just carry on knowing they are missing.
+```{r check for all years using setdiff}
+setdiff(seq(min(df$year), max(df$year)), unique(df$year))
+```
+
+Commonly, we expect a similar number of samples over some interval (e.g. per site or year)
+
+```{r count by years}
+ct_by_year = df %>%
+  group_by(year) %>%
+  tally()
+```
+Viewing just the first 10 years, sampling appears very uneven, is this expected?
+
+```{r display ct, echo = FALSE}
+knitr::kable(head (ct_by_year, 10), digits = 2)
+```
+

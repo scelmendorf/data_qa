@@ -1,6 +1,8 @@
 ---
-title: "Strings (and missing data coded as strings) mixed with numbers and dates"
+title: "1. Scrambled data types"
 ---
+
+This module addresses common errors where string and/or missing data encoded as strings are interwoven with numbers and dates, as well as non-standardized date formatting.
 
 ```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
 #install packages
@@ -52,6 +54,10 @@ df$harvest_moisture_pct[df$Year ==2008] <-df$harvest_moisture_pct[df$Year ==2008
 df$planting_date <-as.character(df$planting_date)
 df$planting_date[df$Year == 2010] <-'5/20/2010'
 df$harvest_date <-as.character(df$harvest_date)
+
+# drop a year
+df = df %>%
+  filter(Year !=2003)
 
 write.csv(df, 'example_data/sunflower_data_broken.csv')
 
@@ -126,7 +132,7 @@ View(all_checks[["planting_date"]])
 ```
 
 ```{r display problems in planting date, echo = FALSE}
-knitr::kable(all_checks[["planting_date"]], format = "html")
+knitr::kable(head(all_checks[["planting_date"]], 10), format = "html")
 
 ```
 
@@ -170,26 +176,8 @@ df <- df %>%
   mutate(harvest_date = lubridate::ymd(harvest_date)) %>%
   mutate_at(numeric_cols, as.numeric)
 
-tibble::glimpse(df)
+glimpse(df)
 
 write.csv(df, 'example_data/sunflower_data_1.csv')
 ```
 
-To explore our data, we will first use the [datacleanr](https://github.com/the-Hull/datacleanr) package. This is an interactive tool that launches a shiny website for exploring your data. More in depth tutorials can be found using the author's link above.
-
-The `dcr_app()` command launches the interactive app.
-
-```{r data cleanr}
-#dcr_app(df)
-```
-
-```{r making missing value codes consistent}
-# nas can read in multiple ways with vs without quotes
-# sarah add some examples of these here
-df <- df %>% replace_with_na_all(
-  condition =
-    ~ .x %in% c("NA", "na", "--", "-", '\\')
-)
-```
-
-Launch `datacleanr`'s interactive app with `dcr_app()`. The following examples demonstrate basic use and highlight features across the four app tabs.

@@ -1,0 +1,39 @@
+---
+title: 10. Shiny apps for data qa and data viz
+---
+
+While an all-purpose workflow for data checking and qa can never cover all the idiosyncracies of each dataset, sometimes it's a good place to start. If you find yourself in this situation, I recommend the datacleanr](https://github.com/the-Hull/datacleanr) package. This is an interactive tool that launches a shiny website for exploring your data. More in depth tutorials can be found using the author's link above. This tool also provides an interactive tool for flagging suspect data from plots, an especially handy feature. 
+
+
+```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
+#install packages
+packReq <- c("datacleanr") 
+
+# Install and load all required packages
+lapply(packReq, function(x) {
+  print(x)
+  if (require(x, character.only = TRUE) == FALSE) {
+    install.packages(x)
+    library(x, character.only = TRUE)
+  }})
+
+```
+
+Load packages
+
+```{r load packages, message=FALSE, warning=FALSE}
+library (datacleanr) # for interactive data viz
+```
+
+
+```{r read and explore data}
+df <-read.csv ('example_data/sunflower_data_broken.csv')
+
+```
+
+
+The `dcr_app()` command launches the interactive app.
+
+```{r launch datacleanr, eval = FALSE}
+dcr_app(df)
+```
