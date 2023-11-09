@@ -1,0 +1,14 @@
+---
+title: "5 simple rules for quality controlling your data"
+---
+
+Inspired by common errors I have found in my own (and others) data, this website contains 10 simple rules for checking your own data. It is aimed at common problems found in tabular data, how to find them and how to fix them!
+
+1.  Strings mixed with numbers and dates
+2.  Missing data
+3.  Duplicate data
+4.  Spelling (unforunately) counts
+5.  Data vis for quality control
+    1.  Shiny apps for data qc
+
+    2.  Roll your own
