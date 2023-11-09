@@ -1,5 +1,5 @@
 ---
-title: "4. Data in range"
+title: "2. Missing data"
 ---
 
 Sensible data ranges are often easy to define based on biological principles (elephants are heavy!; mosquitoes are light!) or mathematical principles (percents must be bounded between 0 and 100)
@@ -41,28 +41,11 @@ view(dfSummary(df))
 ```
 
 ```{r render summary, eval = TRUE, results = 'asis', style = "grid", echo = FALSE}
-# mytable<- dfSummary(df,
-#           plain.ascii  = FALSE,
-#           style        = 'grid',
-#           graph.magnif = 0.85,
-#           varnumbers = FALSE,
-#           valid.col    = FALSE) #,
-#           #tmp.img.dir  = "/tmp")
-# 
-# knitr::kable(mytable, format = 'html')
-
 print(dfSummary(df, 
                 varnumbers   = FALSE,
                 valid.col    = FALSE,
                 graph.magnif = 0.76),
       method = 'render')
-
-#knitr::kable(mytable, format = 'html')
-# print(dfSummary(df, 
-#                 varnumbers   = FALSE, 
-#                 valid.col    = FALSE, 
-#                 graph.magnif = 0.76),
-#       method = 'render')
 
 ```
 

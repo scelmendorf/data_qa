@@ -1,0 +1,81 @@
+---
+title: "7. Time zones"
+---
+
+```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
+# install packages
+packReq <- c(
+  "tidyverse",
+  "ggplot2"
+)
+
+# Install and load all required packages
+lapply(packReq, function(x) {
+  print(x)
+  if (require(x, character.only = TRUE) == FALSE) {
+    install.packages(x)
+    library(x, character.only = TRUE)
+  }
+})
+```
+
+```{r load packages, message=FALSE, warning=FALSE}
+library(tidyverse) # general data wrangling
+library(ggplot2)
+library(lubridate)
+```
+
+Time zones and loggers set to the wrong time zone are a special kind of misery. Countless [blogs](https://www.r-bloggers.com/2018/07/a-tour-of-timezones-troubles-in-r/) have been written about this particular misery, which I will not repeat here. But suffice it to say it is important to understand the time-zone of your data, if time is important!
+
+```{r make fake data, eval = FALSE, echo= FALSE}
+df <- read.csv("C:/Users/Sarah/Documents/COMPLETED/PKG_238_bs_temp_moist_sens/clean_2023/bs_soilsensors.jm.data.csv",
+  na = "NaN"
+)
+df <- df %>%
+  filter(flag_soiltemp5_5cm_avg == "n") %>%
+  filter(local_site == "a_bs") %>%
+  filter(!is.na(soiltemp5_5cm_avg)) %>%
+  select(date, soiltemp5_5cm_avg) %>%
+  mutate(date = lubridate::ymd_hms(date)) %>%
+  mutate(date = date - hours(7)) %>%
+  head(1000) %>%
+  rename(date_time = date, temperature = soiltemp5_5cm_avg)
+
+write.csv(df, "example_data/time_zones.csv", row.names = FALSE)
+```
+
+```{r read data}
+df <- read.csv("example_data/time_zones.csv") %>%
+  mutate(date_time = lubridate::ymd_hms(date_time))
+```
+
+Oftentimes, a plot is enough to sort this out. It helps to zoom way on in on particular period to see the time of day.
+
+```{r plot data, eval = TRUE}
+ggplot(head(df, 40), aes(x = date_time, y = temperature)) +
+  geom_point() +
+  theme_classic()
+```
+
+The sun only shines during the day, so variables like PAR and temperature are helpful indicators here. It is unusual for the temperature to peak just before noon. In this case, the data appear to be in UTC. Sometimes this is desirable! Other times, you may want to convert the timezone to local.
+
+
+```{r fix time zones, eval = TRUE}
+df <- df %>%
+  mutate(date_time_colorado = force_tz(date_time, "America/Denver"))
+```
+
+As always, check your work before proceeding!
+
+```{r plot new times}
+ggplot(head(df, 40), aes(x = date_time, y = temperature, color = "black")) +
+  geom_point(show.legend = TRUE) +
+  geom_point(data = head(df, 40), aes(x = date_time_colorado, y = temperature, color = "red")) +
+  theme_classic() +
+  scale_color_identity(
+    name = "Time zone",
+    breaks = c("black", "red"),
+    label = c("UTC", "Colorado"),
+    guide = "legend"
+  )
+```

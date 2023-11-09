@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>3. Duplicated Data</title>
+<title>6. Geocoordinates</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -132,7 +132,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">3. Duplicated Data</h1>
+      <h1 class="quarto-secondary-nav-title">6. Geocoordinates</h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -182,7 +182,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">Too much or two little</a>
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">Too much or too little</a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -195,7 +195,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./duplicate_data.html" class="sidebar-item-text sidebar-link active">3. Duplicated Data</a>
+  <a href="./duplicate_data.html" class="sidebar-item-text sidebar-link">3. Duplicated Data</a>
   </div>
 </li>
       </ul>
@@ -218,6 +218,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <a href="./spelling_counts.html" class="sidebar-item-text sidebar-link">5. Spelling counts</a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./geocoordinates.html" class="sidebar-item-text sidebar-link active">6. Geocoordinates</a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -232,7 +237,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block">3. Duplicated Data</h1>
+<h1 class="title d-none d-lg-block">6. Geocoordinates</h1>
 </div>
 
 
@@ -246,153 +251,49 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<p>Sometimes duplicate data are expected, but duplicate data can also occur due to transcription errors or mislabeled samples. Use your knowledge of the sampling design to inform what duplicates you expect!</p>
 <div class="cell">
 
 </div>
 <p>Load packages</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># general data wrangling</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(summarytools)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>If you have already completed <a href="./data_types.html">module 1</a> you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED is provided here.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"example_data/sunflower_data_1.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>The <a href="https://htmlpreview.github.io/?https://github.com/dcomtois/summarytools/blob/master/doc/introduction.html">summarytools</a> package introduced in <a href="./missing_data.html">module 2</a> includes information on the number of complete duplicates (all values identical) in our dataset. We can also get this information from one line of code.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">duplicated</span>(df))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0</code></pre>
-</div>
-</div>
-<p>But what if we understood that each hybrid was only planted once per year? We might then want the count of instances where combinations of year and hybrid are duplicated.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">duplicated</span>(df <span class="sc">%&gt;%</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(year, hybrid)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 4</code></pre>
-</div>
-</div>
-<p>Note that the <code>duplicated</code> functions considers anything after the first instance to be a duplicate, some of these may be triplicates or quadriplicates!! So a count of 4 here might mean one combination that exists 5 times, or 4 pairs, or one triplicate and one duplicate.</p>
-<p>For more advanced duplicate sleuthing, check out the <a href="https://cran.r-project.org/web/packages/janitor/vignettes/janitor.html">janitor</a> package. The <code>get_dupes</code> function returns the rows that are duplicated and inserts a count of the duplicates. This suite of functions can be very helpful in sussing out why duplicates are occurring and what to do with them.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>these_dupes <span class="ot">&lt;-</span> <span class="fu">get_dupes</span>(df, year, hybrid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(these_dupes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
 </div>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">'example_data/geocoordinates_example.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Many of the tricks in <a href="./data_in_range.html">module 4</a> also apply here, but sometimes there is no substitute for a map.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create data for world coordinates using map_data() function </span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>world_coordinates <span class="ot">&lt;-</span> <span class="fu">map_data</span>(<span class="st">"world"</span>) </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># create world map using ggplot() function </span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># to make it not complain about x,y undefined</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_blank</span>(<span class="at">data=</span>world_coordinates, <span class="fu">aes</span>(<span class="at">x=</span>long, <span class="at">y=</span>lat)) <span class="sc">+</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_map</span>( </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> world_coordinates,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">map =</span> world_coordinates, </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">map_id =</span> region),</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">fill =</span> <span class="st">"blue"</span>, <span class="at">linewidth =</span> <span class="fl">0.2</span> </span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  )<span class="sc">+</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>( </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> df, </span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(long, lat), </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">'orange'</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co"># legend.position as none removes the legend </span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
-<colgroup>
-<col style="width: 5%">
-<col style="width: 10%">
-<col style="width: 11%">
-<col style="width: 13%">
-<col style="width: 21%">
-<col style="width: 10%">
-<col style="width: 14%">
-<col style="width: 14%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: right;">year</th>
-<th style="text-align: left;">hybrid</th>
-<th style="text-align: right;">dupe_count</th>
-<th style="text-align: left;">harvest_date</th>
-<th style="text-align: right;">harvest_moisture_pct</th>
-<th style="text-align: right;">height_in</th>
-<th style="text-align: right;">yield_lb_acre</th>
-<th style="text-align: left;">planting_date</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">1990</td>
-<td style="text-align: left;">8803</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: right;">15.70</td>
-<td style="text-align: right;">NA</td>
-<td style="text-align: right;">2012.00</td>
-<td style="text-align: left;">NA</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">1990</td>
-<td style="text-align: left;">8803</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">NA</td>
-<td style="text-align: right;">17.40</td>
-<td style="text-align: right;">NA</td>
-<td style="text-align: right;">1865.00</td>
-<td style="text-align: left;">NA</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2000</td>
-<td style="text-align: left;">HySun 530</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">2000-10-17</td>
-<td style="text-align: right;">15.60</td>
-<td style="text-align: right;">59.00</td>
-<td style="text-align: right;">1921.00</td>
-<td style="text-align: left;">2000-06-02</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2000</td>
-<td style="text-align: left;">HySun 530</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">2000-10-17</td>
-<td style="text-align: right;">13.30</td>
-<td style="text-align: right;">60.00</td>
-<td style="text-align: right;">2112.00</td>
-<td style="text-align: left;">2000-06-02</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2015</td>
-<td style="text-align: left;">Falcon</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">2015-11-03</td>
-<td style="text-align: right;">10.24</td>
-<td style="text-align: right;">56.69</td>
-<td style="text-align: right;">2008.90</td>
-<td style="text-align: left;">2015-06-03</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2015</td>
-<td style="text-align: left;">Falcon</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">2015-11-03</td>
-<td style="text-align: right;">10.12</td>
-<td style="text-align: right;">55.12</td>
-<td style="text-align: right;">2125.95</td>
-<td style="text-align: left;">2015-06-03</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2016</td>
-<td style="text-align: left;">Falcon</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">2016-11-09</td>
-<td style="text-align: right;">6.89</td>
-<td style="text-align: right;">60.04</td>
-<td style="text-align: right;">1522.60</td>
-<td style="text-align: left;">2016-05-27</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2016</td>
-<td style="text-align: left;">Falcon</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">2016-11-09</td>
-<td style="text-align: right;">7.71</td>
-<td style="text-align: right;">58.07</td>
-<td style="text-align: right;">1683.70</td>
-<td style="text-align: left;">2016-05-27</td>
-</tr>
-</tbody>
-</table>
+<p><img src="geocoordinates_files/figure-html/map%20data-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>You may ask yourself - did I sample in Asia? If not, quite likely some of your longitudes are lacking the sign convention to tell you that they are sampled in the western hemisphere. If you have done this, you are not alone! For example, can you see the “mirror image” of the US species occurrence records here in the raw data submitted to <a href="https://www.gbif.org/">GBIF</a>?</p>
+<p><img src="figures/us-verbatim.png" class="img-fluid"></p>
+<p>Images courtesy of the developers at GBIF, who have corrected this problem. You can read more about it <a href="https://gbif.blogspot.com/2011/05/here-be-dragons-mapping-occurrence-data.html">here</a>.</p>
 
 
 

@@ -1,0 +1,71 @@
+---
+title: "6. Geocoordinates"
+---
+
+```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
+# install packages
+packReq <- c(
+  "tidyverse",
+  "ggplot2"
+)
+
+# Install and load all required packages
+lapply(packReq, function(x) {
+  print(x)
+  if (require(x, character.only = TRUE) == FALSE) {
+    install.packages(x)
+    library(x, character.only = TRUE)
+  }
+})
+```
+
+Load packages
+
+```{r load packages, message=FALSE, warning=FALSE}
+library(tidyverse) # general data wrangling
+library(ggplot2)
+```
+
+```{r make fake data, eval = FALSE, echo= FALSE}
+df <- data.frame(lat = rnorm(40, 40, 5),
+                 long = rnorm(40, -100, 3))%>%
+  rowid_to_column() %>%
+  mutate(long = ifelse (rowid %in% c(1,2), -1*long, long))
+
+write.csv(df, 'example_data/geocoordinates_example.csv', row.names = F)
+```
+
+```{r read data}
+df <- read.csv('example_data/geocoordinates_example.csv')
+```
+
+Many of the tricks in [module 4](data_in_range.qmd) also apply here, but sometimes there is no substitute for a map.
+
+```{r map data, eval = TRUE}
+# create data for world coordinates using map_data() function 
+world_coordinates <- map_data("world") 
+# create world map using ggplot() function 
+ggplot() + 
+  # to make it not complain about x,y undefined
+  geom_blank(data=world_coordinates, aes(x=long, y=lat)) +
+  geom_map( 
+    data = world_coordinates,
+    map = world_coordinates, 
+    aes(
+      map_id = region),
+    color = "white", fill = "blue", linewidth = 0.2 
+  )+
+  geom_point( 
+    data = df, 
+    aes(long, lat), 
+    alpha = 1, color = 'orange'
+  ) + 
+# legend.position as none removes the legend 
+theme(legend.position="none") 
+```
+
+You may ask yourself - did I sample in Asia? If not, quite likely some of your longitudes are lacking the sign convention to tell you that they are sampled in the western hemisphere. If you have done this, you are not alone! For example, can you see the "mirror image" of the US species occurrence records here in the raw data submitted to [GBIF](https://www.gbif.org/)?
+
+![](figures/us-verbatim.png)
+
+Images courtesy of the developers at GBIF, who have corrected this problem. You can read more about it [here](https://gbif.blogspot.com/2011/05/here-be-dragons-mapping-occurrence-data.html).

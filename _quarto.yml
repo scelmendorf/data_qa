@@ -15,14 +15,15 @@ website:
       - section: "Data Types"
         contents:
           - data_types.qmd
-      - section: "Too much or two little"
+      - section: "Too much or too little"
         contents:
           - missing_data.qmd   
           - duplicate_data.qmd 
       - section: "Wrong data"
         contents:
           - data_in_range.qmd  
-          - spelling.qmd 
+          - spelling_counts.qmd 
+          - geocoordinates.qmd 
 
 
 

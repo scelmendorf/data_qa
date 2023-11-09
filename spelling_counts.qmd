@@ -1,0 +1,126 @@
+---
+title: "5. Spelling counts"
+---
+
+Typing is hard. REALLY HARD. I get it. But computers don't. So if you have typos in your data, your analysis is going to treat those creatively spelled variables as entirely different things. It's unfortunate.
+
+```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
+#install packages
+packReq <- c("tidyverse",
+             "summarytools") 
+
+# Install and load all required packages
+lapply(packReq, function(x) {
+  print(x)
+  if (require(x, character.only = TRUE) == FALSE) {
+    install.packages(x)
+    library(x, character.only = TRUE)
+  }})
+
+```
+
+Load packages
+
+```{r load packages, message=FALSE, warning=FALSE}
+library (tidyverse) #general data wrangling
+```
+
+If you have already completed [module 1](data_types.qmd) you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED is provided here.
+
+```{r read data}
+df <-read.csv ('example_data/sunflower_data_1.csv')
+
+```
+
+The [summarytools](https://htmlpreview.github.io/?https://github.com/dcomtois/summarytools/blob/master/doc/introduction.html) package introduced in [module 2](missing_data.qmd) includes information on the number most commonly encountered strings in non-numeric fields. If you have 10 or fewer categories, this can be a great way to quickly see what the most common categories are and if you have spelled them correctly
+
+```{r render summary, eval = TRUE, results = 'asis', style = "grid", echo = FALSE}
+print(dfSummary(df, 
+                varnumbers   = FALSE,
+                valid.col    = FALSE,
+                graph.magnif = 0.76),
+      method = 'render')
+
+```
+
+This problem gets more complex when there are 1767 categories!! Careful inspection can help. For instance we could view the entire table, sorted alphabetically
+
+```{r find unique hybrid names and sort}
+hybrid_names = df %>%
+  select(hybrid) %>%
+  distinct() %>%
+  arrange(hybrid)
+
+```
+
+Let's look at the top 40.
+
+```{r display names, echo = FALSE}
+knitr::kable(head(hybrid_names, 40, digits = 2))
+```
+
+It often takes some common sense to figure out what is spelled wrong. Sometimes differing in only one digit is meaningful, sometimes that is a typo. Commonly, errors involve things like capitalization and spacing.
+
+In our particular example, it seems that sometimes a space has been entered in the middle of some varieties by one person who keyed in data, but not another, e.g. *12G25 CL* vs *12G25CL*. You have some options here. First, you could go back and correct those typos in the data. For a small volume of data, that's often a great option.
+
+Another option would be to correct each variety name using R code. For instance, if we knew that all instances of **12G25 CL** should actually have been entered as **12G25CL** and **20-EXP05** is really **20-EXP5**, we could fix those errors using a few lines of code
+
+```{r fix a few names}
+df <- df %>%
+  #create a new variable
+  mutate(hybrid_fixed = 
+           case_when(hybrid == '12G25 CL' ~ '12G25CL',
+                     hybrid == '20-EXP05' ~ '20-EXP5',
+                     TRUE ~ hybrid))
+```
+
+Check your work!
+
+```{r check your work, eval = FALSE}
+View (df %>%
+        select(hybrid, hybrid_fixed) %>%
+        distinct()%>%
+        #this allows us to easily view which ones changed to see if we did it right
+        mutate(fixed = (hybrid!=hybrid_fixed)) %>%
+        arrange(desc(fixed)))
+```
+
+```{r display fixes, echo = FALSE}
+knitr::kable(head(df %>%
+        select(hybrid, hybrid_fixed) %>%
+        distinct()%>%
+        #this allows us to easily view which ones changed to see if we did it right
+        mutate(fixed = (hybrid!=hybrid_fixed)) %>%
+        arrange(desc(fixed)), 10))
+```
+
+Having reassured ourselves we fixed the problematic data *without simultaneously breaking any other data* we can remove the extra column.
+
+```{r retain fixed data}
+df <- df %>%
+  #out with the bad, in with the good
+  select(-hybrid) %>%
+  rename(hybrid = hybrid_fixed)
+
+```
+
+We might also postulate that spaces are causing us problems more generally, or other characters. Would it be appropriate to remove all the spaces, tabes, newlines and carriage returns in the variety names? Learning a little about [regular expressions](https://r4ds.had.co.nz/strings.html#matching-patterns-with-regular-expressions) can help you here!
+
+```{r test spacing}
+
+df_space_removal <- df %>%
+  mutate(hybrid_no_space = gsub('\\s+', '', hybrid)) %>%
+  select(hybrid_no_space, hybrid) %>%
+  distinct()
+
+dup_check <- janitor::get_dupes(df_space_removal, hybrid_no_space)
+  
+```
+
+Before applying this we want to check that all sets of names we have 'combined' make sense. You would want to check the whole list, but just a few are displayed here for brevity.
+
+```{r display space changes, echo = FALSE}
+knitr::kable(head(dup_check, 20))
+```
+
+Last, you might curate a list that matches the misented name to the correct name, or use someone else's. For example, the [taxoncleanr](https://ediorg.github.io/taxonomyCleanr/articles/a_common_use_case.html) package can help simplify the world of pain that is aligning taxonomic names.

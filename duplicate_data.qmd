@@ -36,7 +36,7 @@ If you have already completed [module 1](data_types.qmd) you will have created t
 df <- read.csv("example_data/sunflower_data_1.csv")
 ```
 
-The summarytools package introduced in [module 2](missing_data.qmd) includes information on the number of complete duplicates (all values identical) in our dataset. We can also get this information from one line of code.
+The [summarytools](https://htmlpreview.github.io/?https://github.com/dcomtois/summarytools/blob/master/doc/introduction.html) package introduced in [module 2](missing_data.qmd) includes information on the number of complete duplicates (all values identical) in our dataset. We can also get this information from one line of code.
 
 ```{r ct duplicates, eval = TRUE}
 sum(duplicated(df))
