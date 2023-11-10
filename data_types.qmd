@@ -5,10 +5,12 @@ title: "1. Scrambled data types"
 This module addresses common errors where string and/or missing data encoded as strings are interwoven with numbers and dates, as well as non-standardized date formatting.
 
 ```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
-#install packages
-packReq <- c("naniar", # to homogenize missing value codes replace_with_na_all
-             "tidyverse",
-             "dplyr") 
+# install packages
+packReq <- c(
+  "naniar", # to homogenize missing value codes replace_with_na_all
+  "tidyverse",
+  "dplyr"
+)
 
 # Install and load all required packages
 lapply(packReq, function(x) {
@@ -16,11 +18,11 @@ lapply(packReq, function(x) {
   if (require(x, character.only = TRUE) == FALSE) {
     install.packages(x)
     library(x, character.only = TRUE)
-  }})
+  }
+})
 
 ```
 
-Load packages
 
 ```{r load packages, message=FALSE, warning=FALSE}
 library (datacleanr) # for interactive data viz
@@ -30,37 +32,46 @@ library (dplyr) #general data wrangling
 ```
 
 ```{r create data, include = FALSE}
-df <-read.csv('example_data/sunflower_data.csv')
-df = df %>%
-  select(harvest_date, harvest_moisture_pct, height_in, planting_date, 
-         yield_lb_acre, Year, Hybrid)
+df <- read.csv("example_data/sunflower_data.csv")
+df <- df %>%
+  select(
+    harvest_date, harvest_moisture_pct, height_in, planting_date,
+    yield_lb_acre, Year, Hybrid
+  )
 
-#introduce errors
-df = df %>% 
-  #make heigh in 2004 centimeters
-  mutate(height_in = ifelse(Year == 2004, round(2.54*height_in), height_in))
+# introduce errors
+df <- df %>%
+  # make heigh in 2004 centimeters
+  mutate(height_in = ifelse(Year == 2004, round(2.54 * height_in), height_in))
 
-#drag and fill errors
-df$planting_date[df$Year ==2005] <-seq(min(df$planting_date[df$Year ==2005]),by=1,
-                                       length.out = length(df$planting_date[df$Year ==2005]))
+# make up emergence_date
+df <- df %>%
+  rowwise()%>%
+  mutate(emergence_date = planting_date + round(rlnorm(1, 1.2, 0.5))) %>%
+  ungroup()
 
-df$height_in = as.character(df$height_in)
-df$height_in[475] = 'N/A'
-df$height_in[40] = 'na'
-df$height_in[483] = NA
+# drag and fill errors
+df$planting_date[df$Year == 1999] <- seq(min(df$planting_date[df$Year == 1999]),
+  by = 1,
+  length.out = length(df$planting_date[df$Year == 1999])
+)
 
-df$harvest_moisture_pct[df$Year ==2008] <-df$harvest_moisture_pct[df$Year ==2008]/100
+df$height_in <- as.character(df$height_in)
+df$height_in[475] <- "N/A"
+df$height_in[40] <- "na"
+df$height_in[483] <- NA
 
-df$planting_date <-as.character(df$planting_date)
-df$planting_date[df$Year == 2010] <-'5/20/2010'
-df$harvest_date <-as.character(df$harvest_date)
+df$harvest_moisture_pct[df$Year == 2008] <- df$harvest_moisture_pct[df$Year == 2008] / 100
+
+df$planting_date <- as.character(df$planting_date)
+df$planting_date[df$Year == 2010] <- "5/20/2010"
+df$harvest_date <- as.character(df$harvest_date)
 
 # drop a year
-df = df %>%
-  filter(Year !=2003)
+df <- df %>%
+  filter(Year != 2003)
 
-write.csv(df, 'example_data/sunflower_data_broken.csv')
-
+write.csv(df, "example_data/sunflower_data_broken.csv")
 
 ```
 
@@ -83,13 +94,15 @@ A glimpse at our dataset tells us something about its structure. Ideally, you ar
 
 It is very easy to convert everything that *should* be numeric into a numeric field, but at the risk of wiping out actual data. Better is to suss out what those mystery values are, and why they are there in the first place.
 
+There surely is an existing R package that does this more elegantly, but I have yet to discover it. So I wrote a short function that iterates across columns and pulls out all rows of data that cannot successfully be converted to a numeric value. This function (check_non_numeric) is designed to check if a specified column in a dataframe contains non-numeric values. The function takes two arguments: df, which is the dataframe to be checked, and var, which is the name of the column in the dataframe to be checked.
+
 ```{r define numeric columns}
-source('functions/functions.R')
-#define numeric columns
-non_numeric_cols <-'Hybrid'
+source("functions/functions.R")
+# define numeric columns
+non_numeric_cols <- "Hybrid"
 numeric_cols <- setdiff(names(df), non_numeric_cols)
 
-#set up a list to put numeric check results into
+# set up a list to put numeric check results into
 all_checks <- list()
 
 for (i in numeric_cols) {
@@ -173,7 +186,8 @@ df <- df %>%
          #variable capitalization is annoying and hard to remember
          rename_all(tolower)%>%
   #set harvest_date to a date rather than an integer
-  mutate(harvest_date = lubridate::ymd(harvest_date)) %>%
+  mutate(harvest_date = lubridate::ymd(harvest_date),
+         emergence_date = lubridate::ymd(emergence_date)) %>%
   mutate_at(numeric_cols, as.numeric)
 
 glimpse(df)

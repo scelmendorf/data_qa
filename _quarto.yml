@@ -24,6 +24,8 @@ website:
           - data_in_range.qmd  
           - spelling_counts.qmd 
           - geocoordinates.qmd 
+          - time_zones.qmd 
+          - logic_tests.qmd 
 
 
 

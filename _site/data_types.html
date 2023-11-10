@@ -182,7 +182,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">Too much or two little</a>
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">Too much or too little</a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -190,7 +190,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./missing_data.html" class="sidebar-item-text sidebar-link">4. Data in range</a>
+  <a href="./missing_data.html" class="sidebar-item-text sidebar-link">2. Missing data</a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -216,6 +216,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./spelling_counts.html" class="sidebar-item-text sidebar-link">5. Spelling counts</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./geocoordinates.html" class="sidebar-item-text sidebar-link">6. Geocoordinates</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./time_zones.html" class="sidebar-item-text sidebar-link">7. Time zones</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./logic_tests.html" class="sidebar-item-text sidebar-link">8. Logic tests</a>
   </div>
 </li>
       </ul>
@@ -250,7 +265,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 
 </div>
-<p>Load packages</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (datacleanr) <span class="co"># for interactive data viz</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar) <span class="co"># to homogenize missing value codes</span></span>
@@ -265,7 +279,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">glimpse</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 2,685
-Columns: 8
+Columns: 9
 $ X                    &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15…
 $ harvest_date         &lt;int&gt; 19970930, 19970930, 19970930, 19970930, 19970930,…
 $ harvest_moisture_pct &lt;dbl&gt; 8.4, 9.9, 11.0, 10.0, 10.3, 9.7, 9.7, 8.1, 9.5, 9…
@@ -273,7 +287,8 @@ $ height_in            &lt;chr&gt; "57", "62", "56", "60", "58", "58", "66", "60
 $ planting_date        &lt;chr&gt; "19970529", "19970529", "19970529", "19970529", "…
 $ yield_lb_acre        &lt;dbl&gt; 2542, 2179, 2510, 2225, 2208, 2326, 2319, 2224, 2…
 $ Year                 &lt;int&gt; 1997, 1997, 1997, 1997, 1997, 1997, 1997, 1997, 1…
-$ Hybrid               &lt;chr&gt; "AP2098", "AP3470", "AK7304", "AK7305", "AK7306",…</code></pre>
+$ Hybrid               &lt;chr&gt; "AP2098", "AP3470", "AK7304", "AK7305", "AK7306",…
+$ emergence_date       &lt;int&gt; 19970540, 19970532, 19970531, 19970531, 19970537,…</code></pre>
 </div>
 </div>
 <p>A glimpse at our dataset tells us something about its structure. Ideally, you are the data collector and already know all of this. The first column (X) appears to be an index variable. Sometimes this is intentional; more often it occurs when people write out files in R and forget to include the <code>row.names = F</code> argument. Some things should strike you as potentially problematic about this dataset:</p>
@@ -282,13 +297,14 @@ $ Hybrid               &lt;chr&gt; "AP2098", "AP3470", "AK7304", "AK7305", "AK73
 <li>Height (with units inches) is encoded as a character.</li>
 </ol>
 <p>It is very easy to convert everything that <em>should</em> be numeric into a numeric field, but at the risk of wiping out actual data. Better is to suss out what those mystery values are, and why they are there in the first place.</p>
+<p>There surely is an existing R package that does this more elegantly, but I have yet to discover it. So I wrote a short function that iterates across columns and pulls out all rows of data that cannot successfully be converted to a numeric value. This function (check_non_numeric) is designed to check if a specified column in a dataframe contains non-numeric values. The function takes two arguments: df, which is the dataframe to be checked, and var, which is the name of the column in the dataframe to be checked.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">'functions/functions.R'</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#define numeric columns</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>non_numeric_cols <span class="ot">&lt;-</span><span class="st">'Hybrid'</span></span>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"functions/functions.R"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># define numeric columns</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>non_numeric_cols <span class="ot">&lt;-</span> <span class="st">"Hybrid"</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>numeric_cols <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(df), non_numeric_cols)</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#set up a list to put numeric check results into</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># set up a list to put numeric check results into</span></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>all_checks <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> numeric_cols) {</span>
@@ -307,7 +323,8 @@ all values are numeric for  harvest_moisture_pct </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>all values are numeric for  yield_lb_acre 
-all values are numeric for  Year </code></pre>
+all values are numeric for  Year 
+all values are numeric for  emergence_date </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># resulting list will just have the things you still need to check</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(all_checks)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -333,6 +350,7 @@ all values are numeric for  Year </code></pre>
    <th style="text-align:right;"> yield_lb_acre </th>
    <th style="text-align:right;"> Year </th>
    <th style="text-align:left;"> Hybrid </th>
+   <th style="text-align:right;"> emergence_date </th>
   </tr>
  </thead>
 <tbody>
@@ -346,6 +364,7 @@ all values are numeric for  Year </code></pre>
    <td style="text-align:right;"> 2381 </td>
    <td style="text-align:right;"> 1997 </td>
    <td style="text-align:left;"> ST2117 </td>
+   <td style="text-align:right;"> 19970533 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 475 </td>
@@ -357,6 +376,7 @@ all values are numeric for  Year </code></pre>
    <td style="text-align:right;"> 2008 </td>
    <td style="text-align:right;"> 2002 </td>
    <td style="text-align:left;"> F00001 </td>
+   <td style="text-align:right;"> 20020535 </td>
   </tr>
 </tbody>
 </table>
@@ -396,6 +416,7 @@ all values are numeric for  Year </code></pre>
    <th style="text-align:right;"> yield_lb_acre </th>
    <th style="text-align:right;"> Year </th>
    <th style="text-align:left;"> Hybrid </th>
+   <th style="text-align:right;"> emergence_date </th>
   </tr>
  </thead>
 <tbody>
@@ -409,6 +430,7 @@ all values are numeric for  Year </code></pre>
    <td style="text-align:right;"> 1032 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F30008NS,CL </td>
+   <td style="text-align:right;"> 20100524 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 868 </td>
@@ -420,6 +442,7 @@ all values are numeric for  Year </code></pre>
    <td style="text-align:right;"> 1244 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F51122NS,CL </td>
+   <td style="text-align:right;"> 20100523 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 869 </td>
@@ -431,6 +454,7 @@ all values are numeric for  Year </code></pre>
    <td style="text-align:right;"> 1290 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F51137NS,CL </td>
+   <td style="text-align:right;"> 20100523 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 870 </td>
@@ -442,6 +466,7 @@ all values are numeric for  Year </code></pre>
    <td style="text-align:right;"> 1354 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F51139NS,DM,CL </td>
+   <td style="text-align:right;"> 20100521 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 871 </td>
@@ -453,6 +478,7 @@ all values are numeric for  Year </code></pre>
    <td style="text-align:right;"> 1236 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F51313NS,DM,CL </td>
+   <td style="text-align:right;"> 20100522 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 872 </td>
@@ -464,6 +490,7 @@ all values are numeric for  Year </code></pre>
    <td style="text-align:right;"> 664 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F89036NS,DM,CL </td>
+   <td style="text-align:right;"> 20100528 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 873 </td>
@@ -475,6 +502,7 @@ all values are numeric for  Year </code></pre>
    <td style="text-align:right;"> 230 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F89057NS,SU </td>
+   <td style="text-align:right;"> 20100523 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 874 </td>
@@ -486,6 +514,7 @@ all values are numeric for  Year </code></pre>
    <td style="text-align:right;"> 1153 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F91033NS,SU </td>
+   <td style="text-align:right;"> 20100527 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 875 </td>
@@ -497,6 +526,7 @@ all values are numeric for  Year </code></pre>
    <td style="text-align:right;"> 759 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> 306 DMR NS </td>
+   <td style="text-align:right;"> 20100526 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 876 </td>
@@ -508,6 +538,7 @@ all values are numeric for  Year </code></pre>
    <td style="text-align:right;"> 1592 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> 3080 DMR NS </td>
+   <td style="text-align:right;"> 20100529 </td>
   </tr>
 </tbody>
 </table>
@@ -526,7 +557,7 @@ all values are numeric for  Year </code></pre>
 The first warning was:
 ℹ In argument: `yyyymmdd = lubridate::ymd(planting_date_original)`.
 Caused by warning:
-!  145 failed to parse.
+!  146 failed to parse.
 ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#always check your work</span></span>
@@ -570,15 +601,22 @@ Caused by warning:
 </div>
 <p>Finally, we can remove the temporary columns we created, and set all our remaining columns to the correct column types</p>
 <div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There was 1 warning in `mutate()`.
+ℹ In argument: `emergence_date = lubridate::ymd(emergence_date)`.
+Caused by warning:
+!  277 failed to parse.</code></pre>
+</div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 2,685
-Columns: 7
+Columns: 8
 $ harvest_date         &lt;date&gt; 1997-09-30, 1997-09-30, 1997-09-30, 1997-09-30, …
 $ harvest_moisture_pct &lt;dbl&gt; 8.4, 9.9, 11.0, 10.0, 10.3, 9.7, 9.7, 8.1, 9.5, 9…
 $ height_in            &lt;dbl&gt; 57, 62, 56, 60, 58, 58, 66, 60, 60, 54, 54, 62, 5…
 $ yield_lb_acre        &lt;dbl&gt; 2542, 2179, 2510, 2225, 2208, 2326, 2319, 2224, 2…
 $ year                 &lt;int&gt; 1997, 1997, 1997, 1997, 1997, 1997, 1997, 1997, 1…
 $ hybrid               &lt;chr&gt; "AP2098", "AP3470", "AK7304", "AK7305", "AK7306",…
+$ emergence_date       &lt;date&gt; NA, NA, 1997-05-31, 1997-05-31, NA, NA, NA, NA, …
 $ planting_date        &lt;date&gt; 1997-05-29, 1997-05-29, 1997-05-29, 1997-05-29, …</code></pre>
 </div>
 </div>

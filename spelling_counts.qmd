@@ -19,7 +19,6 @@ lapply(packReq, function(x) {
 
 ```
 
-Load packages
 
 ```{r load packages, message=FALSE, warning=FALSE}
 library (tidyverse) #general data wrangling

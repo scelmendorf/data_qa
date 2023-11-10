@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>7. Time zones</title>
+<title>8. Logic tests</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -132,7 +132,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">7. Time zones</h1>
+      <h1 class="quarto-secondary-nav-title">8. Logic tests</h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -225,7 +225,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./time_zones.html" class="sidebar-item-text sidebar-link active">7. Time zones</a>
+  <a href="./time_zones.html" class="sidebar-item-text sidebar-link">7. Time zones</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./logic_tests.html" class="sidebar-item-text sidebar-link active">8. Logic tests</a>
   </div>
 </li>
       </ul>
@@ -242,7 +247,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block">7. Time zones</h1>
+<h1 class="title d-none d-lg-block">8. Logic tests</h1>
 </div>
 
 
@@ -260,48 +265,254 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># general data wrangling</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># general data wrangling</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Time zones and loggers set to the wrong time zone are a special kind of misery. Countless <a href="https://www.r-bloggers.com/2018/07/a-tour-of-timezones-troubles-in-r/">blogs</a> have been written about this particular misery, which I will not repeat here. But suffice it to say it is important to understand the time-zone of your data, if time is important!</p>
+<p>Knowing particular things about your data will help you check for internal consistency and spot additional errors. For example, plants (usually) get larger over time, and it’s difficult to die before you are born.</p>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#here we'll use the readr function read_csv to read our data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># readr "knows" about dates, which can save us some typing</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"example_data/sunflower_data_1.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 2685 Columns: 8
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (1): hybrid
+dbl  (4): harvest_moisture_pct, height_in, yield_lb_acre, year
+date (3): harvest_date, emergence_date, planting_date
 
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"example_data/time_zones.csv"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_time =</span> lubridate<span class="sc">::</span><span class="fu">ymd_hms</span>(date_time))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Oftentimes, a plot is enough to sort this out. It helps to zoom way on in on particular period to see the time of day.</p>
+<p>In our particular example, we will check whether emergence follows planting and harvest follows emergence.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">head</span>(df, <span class="dv">40</span>), <span class="fu">aes</span>(<span class="at">x =</span> date_time, <span class="at">y =</span> temperature)) <span class="sc">+</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(df <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(emergence_date <span class="sc">&lt;=</span> planting_date <span class="sc">|</span> emergence_date <span class="sc">&gt;=</span> harvest_date <span class="sc">|</span> harvest_date <span class="sc">&lt;=</span> planting_date) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(planting_date, emergence_date, harvest_date))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>What is wrong with these data?</p>
+<div class="cell">
 <div class="cell-output-display">
-<p><img src="time_zones_files/figure-html/plot%20data-1.png" class="img-fluid" width="672"></p>
+<table class="table table-sm table-striped">
+<thead>
+<tr class="header">
+<th style="text-align: left;">planting_date</th>
+<th style="text-align: left;">emergence_date</th>
+<th style="text-align: left;">harvest_date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-06-02</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-05</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-06</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-07</td>
+<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-08</td>
+<td style="text-align: left;">1999-06-06</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-09</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-10</td>
+<td style="text-align: left;">1999-06-06</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-11</td>
+<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-12</td>
+<td style="text-align: left;">1999-06-05</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-13</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-14</td>
+<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-15</td>
+<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-16</td>
+<td style="text-align: left;">1999-06-06</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-17</td>
+<td style="text-align: left;">1999-06-05</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-18</td>
+<td style="text-align: left;">1999-06-06</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-19</td>
+<td style="text-align: left;">1999-06-07</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-20</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-21</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-22</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-23</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-24</td>
+<td style="text-align: left;">1999-06-09</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-25</td>
+<td style="text-align: left;">1999-06-06</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-26</td>
+<td style="text-align: left;">1999-06-06</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-27</td>
+<td style="text-align: left;">1999-06-05</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-28</td>
+<td style="text-align: left;">1999-06-09</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-29</td>
+<td style="text-align: left;">1999-06-14</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-30</td>
+<td style="text-align: left;">1999-06-06</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-07-01</td>
+<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-07-02</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-07-03</td>
+<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-07-04</td>
+<td style="text-align: left;">1999-06-05</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-07-05</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-07-06</td>
+<td style="text-align: left;">1999-06-09</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-07-07</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-07-08</td>
+<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-07-09</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-07-10</td>
+<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-07-11</td>
+<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-07-12</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-07-13</td>
+<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
-<p>The sun only shines during the day, so variables like PAR and temperature are helpful indicators here. It is unusual for the temperature to peak just before noon. In this case, the data appear to be in UTC. Sometimes this is desirable! Other times, you may want to convert the timezone to local.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_time_colorado =</span> <span class="fu">force_tz</span>(date_time, <span class="st">"America/Denver"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>As always, check your work before proceeding!</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">head</span>(df, <span class="dv">40</span>), <span class="fu">aes</span>(<span class="at">x =</span> date_time, <span class="at">y =</span> temperature, <span class="at">color =</span> <span class="st">"black"</span>)) <span class="sc">+</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">show.legend =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">head</span>(df, <span class="dv">40</span>), <span class="fu">aes</span>(<span class="at">x =</span> date_time_colorado, <span class="at">y =</span> temperature, <span class="at">color =</span> <span class="st">"red"</span>)) <span class="sc">+</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_identity</span>(</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"Time zone"</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"red"</span>),</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="fu">c</span>(<span class="st">"UTC"</span>, <span class="st">"Colorado"</span>),</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">guide =</span> <span class="st">"legend"</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="time_zones_files/figure-html/plot%20new%20times-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
+<p>The error reflects an amazingly common issue when keying data into excel or other spreadsheets - the ‘drag down’ feature often autofills sequential numbers or dates, rather than a constant. Microsoft Excel is trying to read your mind and doing a terrible job of it. Use caution!</p>
+<p>What other logic checks might we write to detect this kind of error?</p>
 
 
 
