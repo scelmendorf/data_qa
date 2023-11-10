@@ -1,6 +1,7 @@
 project:
   title: "data_qa"
   type: website
+  output-dir: docs
   
   
   

@@ -52,6 +52,7 @@ df <- read.csv("example_data/time_zones.csv") %>%
 Oftentimes, a plot is enough to sort this out. It helps to zoom way on in on particular period to see the time of day.
 
 ```{r plot data, eval = TRUE}
+# Plots a scatter plot of temperature against date_time for the first 40 rows of the input dataframe.
 ggplot(head(df, 40), aes(x = date_time, y = temperature)) +
   geom_point() +
   theme_classic()
@@ -61,6 +62,7 @@ The sun only shines during the day, so variables like PAR and temperature are he
 
 
 ```{r fix time zones, eval = TRUE}
+# Mutates the 'date_time_colorado' column of the dataframe 'df' to force the timezone to 'America/Denver'.
 df <- df %>%
   mutate(date_time_colorado = force_tz(date_time, "America/Denver"))
 ```
@@ -68,6 +70,10 @@ df <- df %>%
 As always, check your work before proceeding!
 
 ```{r plot new times}
+# Plots temperature data against date_time in two different time zones.
+# The first plot shows the temperature data in UTC time zone, while the second plot shows the temperature data in Colorado time zone.
+# The data used for the plot is the first 40 rows of the dataframe 'df'.
+# The plot includes a legend that shows the color mapping for each time zone.
 ggplot(head(df, 40), aes(x = date_time, y = temperature, color = "black")) +
   geom_point(show.legend = TRUE) +
   geom_point(data = head(df, 40), aes(x = date_time_colorado, y = temperature, color = "red")) +
