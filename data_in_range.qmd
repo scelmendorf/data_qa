@@ -4,24 +4,6 @@ title: "4. Data in range"
 
 Sensible data ranges are often easy to define based on biological principles (elephants are heavy!; mosquitoes are light!) or mathematical principles (percents must be bounded between 0 and 100).
 
-```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
-# install packages
-packReq <- c(
-  "tidyverse",
-  "summarytools"
-)
-
-# Install and load all required packages
-lapply(packReq, function(x) {
-  print(x)
-  if (require(x, character.only = TRUE) == FALSE) {
-    install.packages(x)
-    library(x, character.only = TRUE)
-  }
-})
-```
-
-Load packages
 
 ```{r load packages, message=FALSE, warning=FALSE}
 library(tidyverse) # general data wrangling

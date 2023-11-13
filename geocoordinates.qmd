@@ -6,7 +6,8 @@ title: "6. Geocoordinates"
 # install packages
 packReq <- c(
   "tidyverse",
-  "ggplot2"
+  "ggplot2",
+  "leaflet", "mapviel"
 )
 
 # Install and load all required packages
@@ -39,9 +40,9 @@ write.csv(df, 'example_data/geocoordinates_example.csv', row.names = F)
 df <- read.csv('example_data/geocoordinates_example.csv')
 ```
 
-Many of the tricks in [module 4](data_in_range.qmd) also apply here, but sometimes there is no substitute for a map.
+Many of the tricks in [module 4](data_in_range.qmd) also apply here, but sometimes there is no substitute for a map. We can make a basic map using ggplot. 
 
-```{r map data, eval = TRUE}
+```{r basic ggplot map data, eval = TRUE}
 # create data for world coordinates using map_data() function 
 world_coordinates <- map_data("world") 
 # create world map using ggplot() function 
@@ -63,6 +64,61 @@ ggplot() +
 # legend.position as none removes the legend 
 theme(legend.position="none") 
 ```
+
+Or make an interactive map using leaflet - this allows you to pan around imagery and see where on the ground those points really are.
+
+```{r interactive map, evalu = FALSE}
+# helpful examples here https://waterdata.usgs.gov/blog/basemaps/
+
+# attribution text to display in the map using HTML
+att <- paste0(
+  "<a href='https://www.usgs.gov/'>",
+  "U.S. Geological Survey</a> | ",
+  "<a href='https://www.usgs.gov/laws/policies_notices.html'>",
+  "Policies</a>"
+)
+
+GetURL <- function(service, host = "basemap.nationalmap.gov") {
+  sprintf("https://%s/arcgis/services/%s/MapServer/WmsServer", host, service)
+}
+
+
+leaflet::leaflet() %>%
+  leaflet::addWMSTiles(., GetURL("USGSImageryTopo"),
+                            group = "USGS Imagery Topo", attribution = att, layers = "0"
+) %>%
+  leaflet::addCircles(., 
+  data = df,
+             lng = ~ long, lat = ~ lat,
+             color = ~ 'orange',
+             radius = 20000,
+             stroke = TRUE,
+             opacity = 5,
+             weight = 1,
+             fillOpacity = 1)
+
+```
+
+```{r save map image, echo = FALSE}
+map <- leaflet::leaflet() %>%
+  leaflet::addWMSTiles(., GetURL("USGSImageryTopo"),
+                            group = "USGS Imagery Topo", attribution = att, layers = "0"
+) %>%
+  leaflet::addCircles(., 
+  data = df,
+             lng = ~ long, lat = ~ lat,
+             color = ~ 'orange',
+             radius = 20000,
+             stroke = TRUE,
+             opacity = 5,
+             weight = 1,
+             fillOpacity = 1)
+mapview::mapshot(x = map, file = "figures/example_geocations.png")
+
+
+```
+![](figures/figures/example_geocations.png)
+
 
 You may ask yourself - did I sample in Asia? If not, quite likely some of your longitudes are lacking the sign convention to tell you that they are sampled in the western hemisphere. If you have done this, you are not alone! For example, can you see the "mirror image" of the US species occurrence records here in the raw data submitted to [GBIF](https://www.gbif.org/)?
 

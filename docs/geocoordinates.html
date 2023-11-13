@@ -121,6 +121,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     "search-submit-button-title": "Submit"
   }
 }</script>
+<script src="site_libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+<script src="site_libs/jquery-1.12.4/jquery.min.js"></script>
+<link href="site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet">
+<script src="site_libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet">
+<script src="site_libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet">
+<script src="site_libs/leaflet-binding-2.1.2/leaflet.js"></script>
 
 
 <link rel="stylesheet" href="styles.css">
@@ -275,7 +284,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">'example_data/geocoordinates_example.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Many of the tricks in <a href="./data_in_range.html">module 4</a> also apply here, but sometimes there is no substitute for a map.</p>
+<p>Many of the tricks in <a href="./data_in_range.html">module 4</a> also apply here, but sometimes there is no substitute for a map. We can make a basic map using ggplot.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create data for world coordinates using map_data() function </span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>world_coordinates <span class="ot">&lt;-</span> <span class="fu">map_data</span>(<span class="st">"world"</span>) </span>
@@ -298,9 +307,50 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co"># legend.position as none removes the legend </span></span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="geocoordinates_files/figure-html/map%20data-1.png" class="img-fluid" width="672"></p>
+<p><img src="geocoordinates_files/figure-html/basic%20ggplot%20map%20data-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>Or make an interactive map using leaflet - this allows you to pan around imagery and see where on the ground those points really are.</p>
+<div class="cell" data-evalu="false">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># helpful examples here https://waterdata.usgs.gov/blog/basemaps/</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># attribution text to display in the map using HTML</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>att <span class="ot">&lt;-</span> <span class="fu">paste0</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"&lt;a href='https://www.usgs.gov/'&gt;"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"U.S. Geological Survey&lt;/a&gt; | "</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"&lt;a href='https://www.usgs.gov/laws/policies_notices.html'&gt;"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Policies&lt;/a&gt;"</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>GetURL <span class="ot">&lt;-</span> <span class="cf">function</span>(service, <span class="at">host =</span> <span class="st">"basemap.nationalmap.gov"</span>) {</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sprintf</span>(<span class="st">"https://%s/arcgis/services/%s/MapServer/WmsServer"</span>, host, service)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>leaflet<span class="sc">::</span><span class="fu">leaflet</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  leaflet<span class="sc">::</span><span class="fu">addWMSTiles</span>(., <span class="fu">GetURL</span>(<span class="st">"USGSImageryTopo"</span>),</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>                            <span class="at">group =</span> <span class="st">"USGS Imagery Topo"</span>, <span class="at">attribution =</span> att, <span class="at">layers =</span> <span class="st">"0"</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  leaflet<span class="sc">::</span><span class="fu">addCircles</span>(., </span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> df,</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>             <span class="at">lng =</span> <span class="sc">~</span> long, <span class="at">lat =</span> <span class="sc">~</span> lat,</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="sc">~</span> <span class="st">'orange'</span>,</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>             <span class="at">radius =</span> <span class="dv">20000</span>,</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>             <span class="at">stroke =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>             <span class="at">opacity =</span> <span class="dv">5</span>,</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>             <span class="at">weight =</span> <span class="dv">1</span>,</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>             <span class="at">fillOpacity =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-5807caf5c73fba0cc6e9" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-5807caf5c73fba0cc6e9">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addWMSTiles","args":["https://basemap.nationalmap.gov/arcgis/services/USGSImageryTopo/MapServer/WmsServer",null,"USGS Imagery Topo",{"styles":"","format":"image/jpeg","transparent":false,"version":"1.1.1","attribution":"<a href='https://www.usgs.gov/'>U.S. Geological Survey<\/a> | <a href='https://www.usgs.gov/laws/policies_notices.html'>Policies<\/a>","layers":"0"}]},{"method":"addCircles","args":[[34.1366038428674,40.6732725952279,37.6479820811125,44.6246596616312,38.3866286183599,42.8748805247162,34.5589852607996,36.4178097220028,30.7082788134095,36.4396672687548,45.0538956754039,33.2731063428156,31.8337408385798,42.2810970906805,36.3444030948269,51.7896214306492,40.5467846989285,50.5887867135988,45.5906367368744,39.5036198530163,44.1273847068978,44.5154054926014,44.052924903619,50.6911397821171,43.2417407946589,40.9930338381456,39.2289699350463,35.2128355730721,44.0605877572965,35.8022652452063,30.0796968355076,32.230428189325,40.5107152871278,34.9057213362156,32.9129848396871,29.023374508309,45.3305569865379,42.614813492317,44.0920099874947,31.2847737326172],[102.048584808591,104.24082772075,-103.779584557578,-100.732044378107,-99.2121904969849,-100.63641824378,-99.3417152168485,-98.7427546955569,-100.833614292837,-98.6144968708779,-100.276655066326,-95.5906038481156,-99.0205255215922,-95.9923477776941,-97.7609929057495,-97.3006748665553,-99.8231081137124,-101.286919366892,-100.096698063345,-97.1534399060673,-104.822645836022,-104.834211093929,-100.80296253972,-102.773804741633,-101.243847627433,-101.770712753373,-100.569516686762,-94.6715148366506,-97.8023124767081,-99.5829839447944,-101.016119369585,-104.081674717308,-97.7985245714482,-100.864475726898,-101.672404671696,-100.664381148338,-96.7334516906146,-100.383410643001,-100.094421855596,-105.816490463719],20000,null,null,{"interactive":true,"className":"","stroke":true,"color":"orange","weight":1,"opacity":5,"fill":true,"fillColor":"orange","fillOpacity":1},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[29.023374508309,51.7896214306492],"lng":[-105.816490463719,104.24082772075]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>PhantomJS not found. You can install it with webshot::install_phantomjs(). If it is installed, please make sure the phantomjs executable can be found via the PATH variable.</code></pre>
+</div>
+</div>
+<p><img src="figures/figures/example_geocations.png" class="img-fluid"></p>
 <p>You may ask yourself - did I sample in Asia? If not, quite likely some of your longitudes are lacking the sign convention to tell you that they are sampled in the western hemisphere. If you have done this, you are not alone! For example, can you see the “mirror image” of the US species occurrence records here in the raw data submitted to <a href="https://www.gbif.org/">GBIF</a>?</p>
 <p><img src="figures/us-verbatim.png" class="img-fluid"></p>
 <p>Images courtesy of the developers at GBIF, who have corrected this problem. You can read more about it <a href="https://gbif.blogspot.com/2011/05/here-be-dragons-mapping-occurrence-data.html">here</a>.</p>

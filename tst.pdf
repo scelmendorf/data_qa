@@ -1,0 +1,20 @@
+Data Frame Summary  
+df  
+Dimensions: 5 x 2  
+Duplicates: 0  
+
+-------------------------------------------------------------------------
+Variable    Stats / Values        Freqs (% of Valid)   Graph    Missing  
+----------- --------------------- -------------------- -------- ---------
+test        Mean (sd) : 3 (1.6)   1 : 1 (20.0%)        IIII     0        
+[integer]   min < med < max:      2 : 1 (20.0%)        IIII     (0.0%)   
+            1 < 3 < 5             3 : 1 (20.0%)        IIII              
+            IQR (CV) : 2 (0.5)    4 : 1 (20.0%)        IIII              
+                                  5 : 1 (20.0%)        IIII              
+
+something   Mean (sd) : 3 (1.6)   1 : 1 (20.0%)        IIII     0        
+[integer]   min < med < max:      2 : 1 (20.0%)        IIII     (0.0%)   
+            1 < 3 < 5             3 : 1 (20.0%)        IIII              
+            IQR (CV) : 2 (0.5)    4 : 1 (20.0%)        IIII              
+                                  5 : 1 (20.0%)        IIII              
+-------------------------------------------------------------------------
