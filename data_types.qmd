@@ -4,31 +4,9 @@ title: "1. Scrambled data types"
 
 This module addresses common errors where string and/or missing data encoded as strings are interwoven with numbers and dates, as well as non-standardized date formatting.
 
-```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
-# install packages
-packReq <- c(
-  "naniar", # to homogenize missing value codes replace_with_na_all
-  "tidyverse",
-  "dplyr"
-)
-
-# Install and load all required packages
-lapply(packReq, function(x) {
-  print(x)
-  if (require(x, character.only = TRUE) == FALSE) {
-    install.packages(x)
-    library(x, character.only = TRUE)
-  }
-})
-
-```
-
-
 ```{r load packages, message=FALSE, warning=FALSE}
-library (datacleanr) # for interactive data viz
 library(naniar) # to homogenize missing value codes
 library (tidyverse) #general data wrangling
-library (dplyr) #general data wrangling
 ```
 
 ```{r create data, include = FALSE}
@@ -158,24 +136,30 @@ df <- df %>%
          mdy = lubridate::mdy(planting_date_original),
          planting_date_corrected = coalesce(yyyymmdd, mdy))
 
-#always check your work
-sanity_test <- df %>% 
-  filter(Year %in% c(2008:2012)) %>%
-  select(planting_date_original, planting_date_corrected) %>%
-  distinct()
-
 ```
 
 Always check your work!!
 
+```{r check your work, eval = FALSE}
+#always check your work
+View(df %>%
+  filter(Year %in% c(2008:2012)) %>%
+  select(planting_date_original, planting_date_corrected) %>%
+  distinct())
+
+```
+
 ```{r display fixes to date, echo = FALSE}
-knitr::kable(sanity_test, format = "html")
+knitr::kable(df %>% 
+  filter(Year %in% c(2008:2012)) %>%
+  select(planting_date_original, planting_date_corrected) %>%
+  distinct(), format = "html")
 
 ```
 
 Finally, we can remove the temporary columns we created, and set all our remaining columns to the correct column types
 
-```{r final fixes to data types, echo = FALSE}
+```{r final fixes to data types, echo = TRUE}
 #re define numeric columns - this time leaving off date
 numeric_cols <- c("harvest_moisture_pct","height_in" ,"yield_lb_acre")      
 

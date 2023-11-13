@@ -2,29 +2,9 @@
 title: "6. Geocoordinates"
 ---
 
-```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
-# install packages
-packReq <- c(
-  "tidyverse",
-  "ggplot2",
-  "leaflet", "mapviel"
-)
-
-# Install and load all required packages
-lapply(packReq, function(x) {
-  print(x)
-  if (require(x, character.only = TRUE) == FALSE) {
-    install.packages(x)
-    library(x, character.only = TRUE)
-  }
-})
-```
-
-Load packages
 
 ```{r load packages, message=FALSE, warning=FALSE}
 library(tidyverse) # general data wrangling
-library(ggplot2)
 ```
 
 ```{r make fake data, eval = FALSE, echo= FALSE}

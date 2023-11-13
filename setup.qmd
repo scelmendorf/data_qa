@@ -1,11 +1,13 @@
 ---
-title: "8. Logic tests"
+title: "Setup"
 ---
 
-```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
+This tutorial relies on a number of published packages. You can install anything you are missing using the code snippet below.
+
+```{r install packages, message=FALSE, warning=FALSE, echo=TRUE, results='hide'}
 # install packages
 packReq <- c(
-  "tidyverse"
+  "tidyverse", "lubridate", "naniar", "summarytools", "leaflet", "mapview", "datacleanr"
 )
 
 # Install and load all required packages
@@ -18,37 +20,21 @@ lapply(packReq, function(x) {
 })
 ```
 
-```{r load packages, message=FALSE, warning=FALSE}
-library(tidyverse) # general data wrangling
+Sarah is still trying to figure out if I need to put it in a gist or if its possible to source files from elsewhere, but for now here is this useful function you will need to use for the [data types](data_types.qmd) example.
+
+```{r define customized function to look for non-numeric values in data frame}
+# Function if a variable in a data frame is non-numeric
+# @param df data frame
+# @param var variable to check
+# @return data frame with non-numeric values
+check_non_numeric <- function(df, var) {
+  row_probs <- which(!is.na(df[[var]]) & is.na(suppressWarnings(as.numeric(df[[var]]))))
+  if (length(row_probs > 0)) {
+    warning(paste("Check file for", var, "\n"))
+    return(df[row_probs, ])
+  } else {
+    cat(paste("all values are numeric for ", var, "\n"))
+    return(NULL)
+  }
+}
 ```
-
-Knowing particular things about your data will help you check for internal consistency and spot additional errors. For example, plants (usually) get larger over time, and it's difficult to die before you are born. 
-
-
-
-```{r read data}
-#here we'll use the readr function read_csv to read our data
-# readr "knows" about dates, which can save us some typing
-df <- read_csv("example_data/sunflower_data_1.csv")
-
-```
-In our particular example, we will check whether emergence follows planting and harvest follows emergence.
-
-```{r check date ordering, eval = TRUE}
-View(df %>%
-  filter(emergence_date <= planting_date | emergence_date >= harvest_date | harvest_date <= planting_date) %>%
-  select(planting_date, emergence_date, harvest_date))
-```
-
-What is wrong with these data?
-
-```{r display problems, echo = FALSE}
-knitr::kable(df %>%
-  filter(emergence_date <= planting_date | emergence_date >= harvest_date | harvest_date <= planting_date) %>%
-  select(planting_date, emergence_date, harvest_date))
-
-```
-
-The error reflects an amazingly common issue when keying data into excel or other spreadsheets - the 'drag down' feature often autofills sequential numbers or dates, rather than a constant. Microsoft Excel is trying to read your mind and doing a terrible job of it. Use caution!
-
-What other logic checks might we write to detect this kind of error?

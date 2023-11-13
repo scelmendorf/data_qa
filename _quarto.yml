@@ -16,6 +16,7 @@ website:
       - section: "Overview"
         contents:
         - index.qmd
+        - setup.qmd
       - section: "Data Types"
         contents:
           - data_types.qmd

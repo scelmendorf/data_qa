@@ -93,6 +93,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./time_zones.html" rel="next">
+<link href="./spelling_counts.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -170,6 +172,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link">8ish simple rules for quality controlling your data</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./setup.html" class="sidebar-item-text sidebar-link">Setup</a>
   </div>
 </li>
       </ul>
@@ -271,12 +278,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </header>
 
 <div class="cell">
-
-</div>
-<p>Load packages</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># general data wrangling</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># general data wrangling</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 
@@ -341,8 +343,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>             <span class="at">weight =</span> <span class="dv">1</span>,</span>
 <span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>             <span class="at">fillOpacity =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-5807caf5c73fba0cc6e9" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-5807caf5c73fba0cc6e9">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addWMSTiles","args":["https://basemap.nationalmap.gov/arcgis/services/USGSImageryTopo/MapServer/WmsServer",null,"USGS Imagery Topo",{"styles":"","format":"image/jpeg","transparent":false,"version":"1.1.1","attribution":"<a href='https://www.usgs.gov/'>U.S. Geological Survey<\/a> | <a href='https://www.usgs.gov/laws/policies_notices.html'>Policies<\/a>","layers":"0"}]},{"method":"addCircles","args":[[34.1366038428674,40.6732725952279,37.6479820811125,44.6246596616312,38.3866286183599,42.8748805247162,34.5589852607996,36.4178097220028,30.7082788134095,36.4396672687548,45.0538956754039,33.2731063428156,31.8337408385798,42.2810970906805,36.3444030948269,51.7896214306492,40.5467846989285,50.5887867135988,45.5906367368744,39.5036198530163,44.1273847068978,44.5154054926014,44.052924903619,50.6911397821171,43.2417407946589,40.9930338381456,39.2289699350463,35.2128355730721,44.0605877572965,35.8022652452063,30.0796968355076,32.230428189325,40.5107152871278,34.9057213362156,32.9129848396871,29.023374508309,45.3305569865379,42.614813492317,44.0920099874947,31.2847737326172],[102.048584808591,104.24082772075,-103.779584557578,-100.732044378107,-99.2121904969849,-100.63641824378,-99.3417152168485,-98.7427546955569,-100.833614292837,-98.6144968708779,-100.276655066326,-95.5906038481156,-99.0205255215922,-95.9923477776941,-97.7609929057495,-97.3006748665553,-99.8231081137124,-101.286919366892,-100.096698063345,-97.1534399060673,-104.822645836022,-104.834211093929,-100.80296253972,-102.773804741633,-101.243847627433,-101.770712753373,-100.569516686762,-94.6715148366506,-97.8023124767081,-99.5829839447944,-101.016119369585,-104.081674717308,-97.7985245714482,-100.864475726898,-101.672404671696,-100.664381148338,-96.7334516906146,-100.383410643001,-100.094421855596,-105.816490463719],20000,null,null,{"interactive":true,"className":"","stroke":true,"color":"orange","weight":1,"opacity":5,"fill":true,"fillColor":"orange","fillOpacity":1},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[29.023374508309,51.7896214306492],"lng":[-105.816490463719,104.24082772075]}},"evals":[],"jsHooks":[]}</script>
+<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-27171cd3ceff2774b0ce" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-27171cd3ceff2774b0ce">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addWMSTiles","args":["https://basemap.nationalmap.gov/arcgis/services/USGSImageryTopo/MapServer/WmsServer",null,"USGS Imagery Topo",{"styles":"","format":"image/jpeg","transparent":false,"version":"1.1.1","attribution":"<a href='https://www.usgs.gov/'>U.S. Geological Survey<\/a> | <a href='https://www.usgs.gov/laws/policies_notices.html'>Policies<\/a>","layers":"0"}]},{"method":"addCircles","args":[[34.1366038428674,40.6732725952279,37.6479820811125,44.6246596616312,38.3866286183599,42.8748805247162,34.5589852607996,36.4178097220028,30.7082788134095,36.4396672687548,45.0538956754039,33.2731063428156,31.8337408385798,42.2810970906805,36.3444030948269,51.7896214306492,40.5467846989285,50.5887867135988,45.5906367368744,39.5036198530163,44.1273847068978,44.5154054926014,44.052924903619,50.6911397821171,43.2417407946589,40.9930338381456,39.2289699350463,35.2128355730721,44.0605877572965,35.8022652452063,30.0796968355076,32.230428189325,40.5107152871278,34.9057213362156,32.9129848396871,29.023374508309,45.3305569865379,42.614813492317,44.0920099874947,31.2847737326172],[102.048584808591,104.24082772075,-103.779584557578,-100.732044378107,-99.2121904969849,-100.63641824378,-99.3417152168485,-98.7427546955569,-100.833614292837,-98.6144968708779,-100.276655066326,-95.5906038481156,-99.0205255215922,-95.9923477776941,-97.7609929057495,-97.3006748665553,-99.8231081137124,-101.286919366892,-100.096698063345,-97.1534399060673,-104.822645836022,-104.834211093929,-100.80296253972,-102.773804741633,-101.243847627433,-101.770712753373,-100.569516686762,-94.6715148366506,-97.8023124767081,-99.5829839447944,-101.016119369585,-104.081674717308,-97.7985245714482,-100.864475726898,-101.672404671696,-100.664381148338,-96.7334516906146,-100.383410643001,-100.094421855596,-105.816490463719],20000,null,null,{"interactive":true,"className":"","stroke":true,"color":"orange","weight":1,"opacity":5,"fill":true,"fillColor":"orange","fillOpacity":1},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[29.023374508309,51.7896214306492],"lng":[-105.816490463719,104.24082772075]}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="cell">
@@ -456,6 +458,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./spelling_counts.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">5. Spelling counts</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./time_zones.html" class="pagination-link">
+        <span class="nav-page-text">7. Time zones</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
 </div> <!-- /content -->
 
 

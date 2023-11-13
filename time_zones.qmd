@@ -2,27 +2,8 @@
 title: "7. Time zones"
 ---
 
-```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
-# install packages
-packReq <- c(
-  "tidyverse",
-  "ggplot2"
-)
-
-# Install and load all required packages
-lapply(packReq, function(x) {
-  print(x)
-  if (require(x, character.only = TRUE) == FALSE) {
-    install.packages(x)
-    library(x, character.only = TRUE)
-  }
-})
-```
-
 ```{r load packages, message=FALSE, warning=FALSE}
 library(tidyverse) # general data wrangling
-library(ggplot2)
-library(lubridate)
 ```
 
 Time zones and loggers set to the wrong time zone are a special kind of misery. Countless [blogs](https://www.r-bloggers.com/2018/07/a-tour-of-timezones-troubles-in-r/) have been written about this particular misery, which I will not repeat here. But suffice it to say it is important to understand the time-zone of your data, if time is important!
@@ -59,7 +40,6 @@ ggplot(head(df, 40), aes(x = date_time, y = temperature)) +
 ```
 
 The sun only shines during the day, so variables like PAR and temperature are helpful indicators here. It is unusual for the temperature to peak just before noon. In this case, the data appear to be in UTC. Sometimes this is desirable! Other times, you may want to convert the timezone to local.
-
 
 ```{r fix time zones, eval = TRUE}
 # Mutates the 'date_time_colorado' column of the dataframe 'df' to force the timezone to 'America/Denver'.
