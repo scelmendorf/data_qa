@@ -1,4 +1,3 @@
-
 # Function if a variable in a data frame is non-numeric
 # @param df data frame
 # @param var variable to check

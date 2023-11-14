@@ -6,7 +6,7 @@ This module addresses common errors where string and/or missing data encoded as 
 
 ```{r load packages, message=FALSE, warning=FALSE}
 library(naniar) # to homogenize missing value codes
-library (tidyverse) #general data wrangling
+library(tidyverse) # general data wrangling
 ```
 
 ```{r create data, include = FALSE}
@@ -24,7 +24,7 @@ df <- df %>%
 
 # make up emergence_date
 df <- df %>%
-  rowwise()%>%
+  rowwise() %>%
   mutate(emergence_date = planting_date + round(rlnorm(1, 1.2, 0.5))) %>%
   ungroup()
 
@@ -50,19 +50,16 @@ df <- df %>%
   filter(Year != 2003)
 
 write.csv(df, "example_data/sunflower_data_broken.csv")
-
 ```
 
 ```{r read and explore data}
-df <-read.csv ('example_data/sunflower_data_broken.csv')
-
+df <- read.csv("example_data/sunflower_data_broken.csv")
 ```
 
 To understand a little bit about the data, it can be helpful to get a brief summary of the contents
 
 ```{r data exploration}
 dplyr::glimpse(df)
-
 ```
 
 A glimpse at our dataset tells us something about its structure. Ideally, you are the data collector and already know all of this. The first column (X) appears to be an index variable. Sometimes this is intentional; more often it occurs when people write out files in R and forget to include the `row.names = F` argument. Some things should strike you as potentially problematic about this dataset:
@@ -89,7 +86,6 @@ for (i in numeric_cols) {
 
 # resulting list will just have the things you still need to check
 names(all_checks)
-
 ```
 
 ```{r view problems, eval = FALSE}
@@ -98,24 +94,21 @@ View(all_checks[["height_in"]])
 
 ```{r display problems, echo = FALSE}
 knitr::kable(all_checks[["height_in"]], format = "html")
-
 ```
 
 We can see from the above there are two different missing value codes included in the height column. Having confidence in the issues, we can now set those to a proper missing value code. Here I'm going to run on the assumption that these two missing value codes may be found elsewhere, and replace them everywhere
 
 ```{r replace missing}
-#replace non-standard missing value codes
+# replace non-standard missing value codes
 df <- df %>% replace_with_na_all(
   condition =
     ~ .x %in% c("N/A", "na")
 )
-
 ```
 
 ```{r what else is wrong missing}
 # resulting list will just have the things you still need to check
 names(all_checks)
-
 ```
 
 ```{r view problems in planting date, eval = FALSE}
@@ -124,7 +117,6 @@ View(all_checks[["planting_date"]])
 
 ```{r display problems in planting date, echo = FALSE}
 knitr::kable(head(all_checks[["planting_date"]], 10), format = "html")
-
 ```
 
 It appears that some of the data have dates encoded as an 8 digit integer YYYYMMDD while others have M/D/YYYY. With this information, we can standardize the dates two ways, and then consolidate into a single, proper date column
@@ -132,50 +124,50 @@ It appears that some of the data have dates encoded as an 8 digit integer YYYYMM
 ```{r fix planting date}
 df <- df %>%
   rename(planting_date_original = planting_date) %>%
-  mutate(yyyymmdd= lubridate::ymd(planting_date_original),
-         mdy = lubridate::mdy(planting_date_original),
-         planting_date_corrected = coalesce(yyyymmdd, mdy))
-
+  mutate(
+    yyyymmdd = lubridate::ymd(planting_date_original),
+    mdy = lubridate::mdy(planting_date_original),
+    planting_date_corrected = coalesce(yyyymmdd, mdy)
+  )
 ```
 
 Always check your work!!
 
 ```{r check your work, eval = FALSE}
-#always check your work
+# always check your work
 View(df %>%
   filter(Year %in% c(2008:2012)) %>%
   select(planting_date_original, planting_date_corrected) %>%
   distinct())
-
 ```
 
 ```{r display fixes to date, echo = FALSE}
-knitr::kable(df %>% 
+knitr::kable(df %>%
   filter(Year %in% c(2008:2012)) %>%
   select(planting_date_original, planting_date_corrected) %>%
   distinct(), format = "html")
-
 ```
 
 Finally, we can remove the temporary columns we created, and set all our remaining columns to the correct column types
 
 ```{r final fixes to data types, echo = TRUE}
-#re define numeric columns - this time leaving off date
-numeric_cols <- c("harvest_moisture_pct","height_in" ,"yield_lb_acre")      
+# re define numeric columns - this time leaving off date
+numeric_cols <- c("harvest_moisture_pct", "height_in", "yield_lb_acre")
 
 df <- df %>%
   select(-yyyymmdd, -mdy, -planting_date_original, -X) %>%
   rename(planting_date = planting_date_corrected) %>%
-         #while we are at it let's rename everything to lower case as 
-         #variable capitalization is annoying and hard to remember
-         rename_all(tolower)%>%
-  #set harvest_date to a date rather than an integer
-  mutate(harvest_date = lubridate::ymd(harvest_date),
-         emergence_date = lubridate::ymd(emergence_date)) %>%
+  # while we are at it let's rename everything to lower case as
+  # variable capitalization is annoying and hard to remember
+  rename_all(tolower) %>%
+  # set harvest_date to a date rather than an integer
+  mutate(
+    harvest_date = lubridate::ymd(harvest_date),
+    emergence_date = lubridate::ymd(emergence_date)
+  ) %>%
   mutate_at(numeric_cols, as.numeric)
 
 glimpse(df)
 
-write.csv(df, 'example_data/sunflower_data_1.csv', row.names = FALSE)
+write.csv(df, "example_data/sunflower_data_1.csv", row.names = FALSE)
 ```
-

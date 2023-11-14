@@ -8,41 +8,44 @@ library(tidyverse) # general data wrangling
 ```
 
 ```{r make fake data, eval = FALSE, echo= FALSE}
-df <- data.frame(lat = rnorm(40, 40, 5),
-                 long = rnorm(40, -100, 3))%>%
+df <- data.frame(
+  lat = rnorm(40, 40, 5),
+  long = rnorm(40, -100, 3)
+) %>%
   rowid_to_column() %>%
-  mutate(long = ifelse (rowid %in% c(1,2), -1*long, long))
+  mutate(long = ifelse(rowid %in% c(1, 2), -1 * long, long))
 
-write.csv(df, 'example_data/geocoordinates_example.csv', row.names = F)
+write.csv(df, "example_data/geocoordinates_example.csv", row.names = F)
 ```
 
 ```{r read data}
-df <- read.csv('example_data/geocoordinates_example.csv')
+df <- read.csv("example_data/geocoordinates_example.csv")
 ```
 
 Many of the tricks in [module 4](data_in_range.qmd) also apply here, but sometimes there is no substitute for a map. We can make a basic map using ggplot. 
 
 ```{r basic ggplot map data, eval = TRUE}
-# create data for world coordinates using map_data() function 
-world_coordinates <- map_data("world") 
-# create world map using ggplot() function 
-ggplot() + 
+# create data for world coordinates using map_data() function
+world_coordinates <- map_data("world")
+# create world map using ggplot() function
+ggplot() +
   # to make it not complain about x,y undefined
-  geom_blank(data=world_coordinates, aes(x=long, y=lat)) +
-  geom_map( 
+  geom_blank(data = world_coordinates, aes(x = long, y = lat)) +
+  geom_map(
     data = world_coordinates,
-    map = world_coordinates, 
+    map = world_coordinates,
     aes(
-      map_id = region),
-    color = "white", fill = "blue", linewidth = 0.2 
-  )+
-  geom_point( 
-    data = df, 
-    aes(long, lat), 
-    alpha = 1, color = 'orange'
-  ) + 
-# legend.position as none removes the legend 
-theme(legend.position="none") 
+      map_id = region
+    ),
+    color = "white", fill = "blue", linewidth = 0.2
+  ) +
+  geom_point(
+    data = df,
+    aes(long, lat),
+    alpha = 1, color = "orange"
+  ) +
+  # legend.position as none removes the legend
+  theme(legend.position = "none")
 ```
 
 Or make an interactive map using leaflet - this allows you to pan around imagery and see where on the ground those points really are.
@@ -65,37 +68,36 @@ GetURL <- function(service, host = "basemap.nationalmap.gov") {
 
 leaflet::leaflet() %>%
   leaflet::addWMSTiles(., GetURL("USGSImageryTopo"),
-                            group = "USGS Imagery Topo", attribution = att, layers = "0"
-) %>%
-  leaflet::addCircles(., 
-  data = df,
-             lng = ~ long, lat = ~ lat,
-             color = ~ 'orange',
-             radius = 20000,
-             stroke = TRUE,
-             opacity = 5,
-             weight = 1,
-             fillOpacity = 1)
-
+    group = "USGS Imagery Topo", attribution = att, layers = "0"
+  ) %>%
+  leaflet::addCircles(.,
+    data = df,
+    lng = ~long, lat = ~lat,
+    color = ~"orange",
+    radius = 20000,
+    stroke = TRUE,
+    opacity = 5,
+    weight = 1,
+    fillOpacity = 1
+  )
 ```
 
 ```{r save map image, echo = FALSE}
 map <- leaflet::leaflet() %>%
   leaflet::addWMSTiles(., GetURL("USGSImageryTopo"),
-                            group = "USGS Imagery Topo", attribution = att, layers = "0"
-) %>%
-  leaflet::addCircles(., 
-  data = df,
-             lng = ~ long, lat = ~ lat,
-             color = ~ 'orange',
-             radius = 20000,
-             stroke = TRUE,
-             opacity = 5,
-             weight = 1,
-             fillOpacity = 1)
+    group = "USGS Imagery Topo", attribution = att, layers = "0"
+  ) %>%
+  leaflet::addCircles(.,
+    data = df,
+    lng = ~long, lat = ~lat,
+    color = ~"orange",
+    radius = 20000,
+    stroke = TRUE,
+    opacity = 5,
+    weight = 1,
+    fillOpacity = 1
+  )
 mapview::mapshot(x = map, file = "figures/example_geocations.png")
-
-
 ```
 ![](figures/figures/example_geocations.png)
 
