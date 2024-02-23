@@ -4,21 +4,18 @@ title: "5. Spelling counts"
 
 Typing is hard. REALLY HARD. I get it. But computers don't. So if you have typos in your data, your analysis is going to treat those creatively spelled variables as entirely different things. It's unfortunate.
 
-
 ```{r load packages, message=FALSE, warning=FALSE}
 library(tidyverse) # general data wrangling
 library(summarytools) # slick dataset summaries
 ```
 
-If you have already completed [module 1](data_types.qmd) you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED is provided here.
+If you have already completed the [Scrambled data types](data_types.qmd) module you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED can be downloaded [here](http://nwt.colorado.edu/tutorial_example_data/sunflower_data_broken.csv) and tucked into your example_data directory.
 
 ```{r read data}
 df <- read.csv("example_data/sunflower_data_1.csv")
 ```
 
-The [summarytools](https://htmlpreview.github.io/?https://github.com/dcomtois/summarytools/blob/master/doc/introduction.html) package introduced in [module 2](missing_data.qmd) includes information on the number most commonly encountered strings in non-numeric fields. If you have 10 or fewer categories, this can be a great way to quickly see what the most common categories are and if you have spelled them correctly.
-
-*note to mac users, you probably need X quartz installed for the summarytools package to work. And it may crash RStudio from time to time...*
+The [summarytools](https://htmlpreview.github.io/?https://github.com/dcomtois/summarytools/blob/master/doc/introduction.html) package introduced in previous modules includes information on the number most commonly encountered strings in non-numeric fields. If you have 10 or fewer categories, this can be a great way to quickly see what the most common categories are and if you have spelled them correctly.
 
 ```{r render summary, eval = TRUE, results = 'asis', style = "grid", echo = FALSE}
 print(
@@ -94,7 +91,7 @@ df <- df %>%
   rename(hybrid = hybrid_fixed)
 ```
 
-We might also postulate that spaces are causing us problems more generally, or other characters. Would it be appropriate to remove all the spaces, tabes, newlines and carriage returns in the variety names? Learning a little about [regular expressions](https://r4ds.had.co.nz/strings.html#matching-patterns-with-regular-expressions) can help you here!
+We might also postulate that spaces are causing us problems more generally, or other characters. Would it be appropriate to remove all the spaces, tabs, newlines and carriage returns in the variety names? Learning a little about [regular expressions](https://r4ds.had.co.nz/strings.html#matching-patterns-with-regular-expressions) can help you here!
 
 ```{r test spacing}
 df_space_removal <- df %>%
@@ -111,4 +108,4 @@ Before applying this we want to check that all sets of names we have 'combined' 
 knitr::kable(head(dup_check, 20))
 ```
 
-Last, you might curate a list that matches the misented name to the correct name, or use someone else's. For example, the [taxoncleanr](https://ediorg.github.io/taxonomyCleanr/articles/a_common_use_case.html) package can help simplify the world of pain that is aligning taxonomic names.
+Last, you might curate a list that matches the misentered name to the correct name, or use someone a published list of synonyms. As one example, the [taxoncleanr](https://ediorg.github.io/taxonomyCleanr/articles/a_common_use_case.html) package can help simplify the world of pain that is aligning taxonomic names.

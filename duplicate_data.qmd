@@ -1,5 +1,5 @@
 ---
-title: "3. Duplicated Data"
+title: "3. Duplicated sata"
 ---
 
 Sometimes duplicate data are expected, but duplicate data can also occur due to transcription errors or mislabeled samples. Use your knowledge of the sampling design to inform what duplicates you expect!
@@ -26,17 +26,17 @@ Load packages
 
 ```{r load packages, message=FALSE, warning=FALSE}
 library(tidyverse) # general data wrangling
-library(summarytools)
-library(janitor)
+library(summarytools) # counts complete duplicates
+library(janitor) # finds user defined duplicates
 ```
 
-If you have already completed [module 1](data_types.qmd) you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED is provided here.
+If you have already completed the [Scrambled data types](data_types.qmd) module you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED can be downloaded [here](http://nwt.colorado.edu/tutorial_example_data/sunflower_data_broken.csv) and tucked into your example_data directory.
 
 ```{r read data}
 df <- read.csv("example_data/sunflower_data_1.csv")
 ```
 
-The [summarytools](https://htmlpreview.github.io/?https://github.com/dcomtois/summarytools/blob/master/doc/introduction.html) package introduced in [module 2](missing_data.qmd) includes information on the number of complete duplicates (all values identical) in our dataset. We can also get this information from one line of code.
+The [summarytools](https://htmlpreview.github.io/?https://github.com/dcomtois/summarytools/blob/master/doc/introduction.html) package introduced in the [Missing data](missing_data.qmd) module includes information on the number of complete duplicates (all values identical) in our dataset. We can also get this information from one line of code.
 
 ```{r ct duplicates, eval = TRUE}
 sum(duplicated(df))
@@ -64,3 +64,12 @@ View(these_dupes)
 ```{r display ct, echo = FALSE}
 knitr::kable(these_dupes, digits = 2)
 ```
+
+Getting rid of exact duplicates (for example if you find you entered the same data twice) is very easy using the `distinct` function. In this case, this won't accomplish anything because our data are not exact duplicates.
+
+```{r de-dupe}
+df <- df %>%
+  distinct()
+```
+
+Records that are partial duplicates (such as the example above) often require going back to the original paper datasheets to check which record is correct. Perhaps one of the rows above was actually a different year, for example. In other cases, re-reading the protocol to understand the replication structure may illuminate why these 'apparent' duplicates exist and the statistical analysis can be adjusted accordingly.
