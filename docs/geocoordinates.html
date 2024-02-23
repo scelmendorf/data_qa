@@ -183,7 +183,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./duplicate_data.html" class="sidebar-item-text sidebar-link">3. Duplicated sata</a>
+  <a href="./duplicate_data.html" class="sidebar-item-text sidebar-link">3. Duplicated data</a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -209,6 +209,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./logic_tests.html" class="sidebar-item-text sidebar-link">8. Logic tests</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./script_for_qc.html" class="sidebar-item-text sidebar-link">9. Scripted workflows</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./datacleanr.html" class="sidebar-item-text sidebar-link">10. Interactive data qa and data viz (Shiny apps)</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./other_resources.html" class="sidebar-item-text sidebar-link">Other resources</a>
   </div>
 </li>
     </ul>
@@ -305,8 +320,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">fillOpacity =</span> <span class="dv">1</span></span>
 <span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-1689e15235bbcc35a89c" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-1689e15235bbcc35a89c">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addWMSTiles","args":["https://basemap.nationalmap.gov/arcgis/services/USGSImageryTopo/MapServer/WmsServer",null,"USGS Imagery Topo",{"styles":"","format":"image/jpeg","transparent":false,"version":"1.1.1","attribution":"<a href='https://www.usgs.gov/'>U.S. Geological Survey<\/a> | <a href='https://www.usgs.gov/laws/policies_notices.html'>Policies<\/a>","layers":"0"}]},{"method":"addCircles","args":[[48.0227649367594,47.8154685781026,38.9111913006505,39.0801243681205,41.0332574055263,46.6456971624221,31.1150360069872,38.7052726667113,42.218482139916,47.5118559861549,42.1614730141254,41.2181021503036,39.6330268755256,34.898551399719,36.468154873668,45.0309286558125,37.6567037979178,41.8214217877451,32.4083403237221,34.5871210494667,47.563262649304,42.2362452694729,38.1776547446038,39.4544602559903,53.4387905619562,45.9801333124542,33.7212627721068,51.2240246696631,46.2416015023155,38.0953688241606,39.2809505073277,37.4236534910901,36.7909909514667,52.9100207752736,40.0416756214102,43.5818011880548,40.7724455534075,33.9085669649963,34.6252303684857,42.8008750454288],[99.9567007189442,94.2697599668257,-102.382660818923,-102.448053598592,-91.7369013502295,-100.874982999874,-101.116599995769,-97.4652141735443,-101.690579909694,-100.120327011617,-100.628169235549,-100.68644705226,-97.9146072707882,-103.650060722275,-101.82926054514,-96.8940503280913,-101.153049859042,-100.713839758763,-103.144310415461,-96.5748627477814,-97.8848233866336,-99.4104344070253,-104.353706905713,-98.8447930291042,-97.7037130456275,-94.1262099158488,-98.2894660813148,-99.8728234752582,-104.361331668468,-99.603973871296,-99.4723420254234,-104.773233952711,-103.575585636476,-102.343034127202,-96.4724595621957,-105.161725433914,-98.8503236795673,-98.7274651679534,-100.608982283693,-96.9122716373457],20000,null,null,{"interactive":true,"className":"","stroke":true,"color":"orange","weight":1,"opacity":5,"fill":true,"fillColor":"orange","fillOpacity":1},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[31.1150360069872,53.4387905619562],"lng":[-105.161725433914,99.9567007189442]}},"evals":[],"jsHooks":[]}</script>
+<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-3e125b9474f2f6060215" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-3e125b9474f2f6060215">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addWMSTiles","args":["https://basemap.nationalmap.gov/arcgis/services/USGSImageryTopo/MapServer/WmsServer",null,"USGS Imagery Topo",{"styles":"","format":"image/jpeg","transparent":false,"version":"1.1.1","attribution":"<a href='https://www.usgs.gov/'>U.S. Geological Survey<\/a> | <a href='https://www.usgs.gov/laws/policies_notices.html'>Policies<\/a>","layers":"0"}]},{"method":"addCircles","args":[[48.0227649367594,47.8154685781026,38.9111913006505,39.0801243681205,41.0332574055263,46.6456971624221,31.1150360069872,38.7052726667113,42.218482139916,47.5118559861549,42.1614730141254,41.2181021503036,39.6330268755256,34.898551399719,36.468154873668,45.0309286558125,37.6567037979178,41.8214217877451,32.4083403237221,34.5871210494667,47.563262649304,42.2362452694729,38.1776547446038,39.4544602559903,53.4387905619562,45.9801333124542,33.7212627721068,51.2240246696631,46.2416015023155,38.0953688241606,39.2809505073277,37.4236534910901,36.7909909514667,52.9100207752736,40.0416756214102,43.5818011880548,40.7724455534075,33.9085669649963,34.6252303684857,42.8008750454288],[99.9567007189442,94.2697599668257,-102.382660818923,-102.448053598592,-91.7369013502295,-100.874982999874,-101.116599995769,-97.4652141735443,-101.690579909694,-100.120327011617,-100.628169235549,-100.68644705226,-97.9146072707882,-103.650060722275,-101.82926054514,-96.8940503280913,-101.153049859042,-100.713839758763,-103.144310415461,-96.5748627477814,-97.8848233866336,-99.4104344070253,-104.353706905713,-98.8447930291042,-97.7037130456275,-94.1262099158488,-98.2894660813148,-99.8728234752582,-104.361331668468,-99.603973871296,-99.4723420254234,-104.773233952711,-103.575585636476,-102.343034127202,-96.4724595621957,-105.161725433914,-98.8503236795673,-98.7274651679534,-100.608982283693,-96.9122716373457],20000,null,null,{"interactive":true,"className":"","stroke":true,"color":"orange","weight":1,"opacity":5,"fill":true,"fillColor":"orange","fillOpacity":1},null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null,null]}],"limits":{"lat":[31.1150360069872,53.4387905619562],"lng":[-105.161725433914,99.9567007189442]}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="cell">

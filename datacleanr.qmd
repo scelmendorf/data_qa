@@ -2,7 +2,7 @@
 title: 10. Interactive data qa and data viz (Shiny apps)
 ---
 
-While an all-purpose workflow for data checking and qa can never cover all the idiosyncracies of each dataset, sometimes it's a good place to start. If you find yourself in this situation, I recommend the [datacleanr](https://github.com/the-Hull/datacleanr) package. This is an interactive tool that launches a shiny website for exploring your data. More in depth tutorials can be found using the author's link above. This tool also provides an interactive tool for flagging suspect data from plots, an especially handy feature.
+While an all-purpose workflow for data checking and qa can never cover all the idiosyncracies of each dataset, sometimes it's a good place to start. If you find yourself in this situation, I recommend the [datacleanr](https://github.com/the-Hull/datacleanr) package. This is an interactive tool that launches a shiny website for exploring your data. This tool also provides an interactive tool for flagging suspect data from plots, an especially handy feature. The package authors have made some really excellent in depth [tutorials](https://the-hull.github.io/datacleanr/). The basics of launching the app are below - so if you are person who likes to learn by trial and error and see what happens, follow the code below. Otherwise, peruse the linked [tutorials](https://the-hull.github.io/datacleanr/).
 
 ```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
 #install packages

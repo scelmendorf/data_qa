@@ -1,5 +1,5 @@
 ---
-title: "3. Duplicated sata"
+title: "3. Duplicated data"
 ---
 
 Sometimes duplicate data are expected, but duplicate data can also occur due to transcription errors or mislabeled samples. Use your knowledge of the sampling design to inform what duplicates you expect!

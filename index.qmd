@@ -1,5 +1,5 @@
 ---
-title: "8ish simple rules for quality controlling your data"
+title: "10ish simple steps for quality controlling your data"
 ---
 
 Inspired by common errors I have found in my own (and others) data, this website contains 10 simple rules for checking your own data. It is aimed at common problems found in tabular data, how to find them and how to fix them!

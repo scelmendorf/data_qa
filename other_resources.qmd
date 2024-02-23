@@ -5,3 +5,5 @@ title: "Other resources"
 Depending on how often you need to qc the same type of data, it may be worth investing the time to write a script that automates a report or generating figures.
 
 The [pointblank](https://rstudio.github.io/pointblank/index.html) package can run a suite of custom-defined validation functions in a data quality reporting workflow that generates a data quality analysis report. It can also work directly with database tables, not just files stored locally.
+
+The [assertr](https://cran.r-project.org/web/packages/assertr/vignettes/assertr.html) package provides a suite of functions that can ensure a user-specified set of assertions are valid before allowing an analysis to proceed. It also includes some handy functions to check for multivariate outliers, rather than checking each variable separately.

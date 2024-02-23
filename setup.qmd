@@ -1,5 +1,5 @@
 ---
-title: "0. Setup"
+title: "Setup"
 ---
 
 This tutorial relies on a number of published packages. You can install anything you are missing using the code snippet below.

@@ -14,16 +14,18 @@ I usually include a function to generate a series of plots appropriate to the da
 
 Some tips: plotting this year's data on top of last year's data, or coloring points by location, data collector, etc can help spot errors due to changes in protocols, sensor swaps, or miskeyed data.
 
-When I have multiple variables to look through, I usually prefer to set up a common type of plot, iterate through all the variables, and dump the results into a pdf that I can flip through later or share with collaborators rather than viewing things only in Rstudio's plot window, or having a zillion .jpgs to flip through.
+When I have multiple variables to look through, I usually prefer to set up a common type of plot, iterate through all the variables, and dump the results into a pdf that I can flip through later or share with collaborators rather than viewing things only in Rstudio's plot window, or having a zillion .jpgs to flip through. An example script would correct all the typos/date formatting etc as we have done already, write out a final file for analysis and plot all the variables
 
-
-
-```{r plots to pdf}
+```{r plots to pdf, message=FALSE, warning=FALSE}
 library (tidyverse)
 df <-read.csv ('example_data/sunflower_data_1.csv') %>%
   mutate(planting_date = lubridate::ymd(planting_date),
          harvest_date = lubridate::ymd(harvest_date),
          emergence_date = lubridate::ymd(emergence_date))
+
+write.csv(df, 'analysis_ready_data/sunflower_data.csv')
+
+#plot all
 non_numeric_cols <- "hybrid"
 numeric_cols <- setdiff(names(df), non_numeric_cols)
 
