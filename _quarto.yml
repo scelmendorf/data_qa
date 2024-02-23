@@ -6,7 +6,7 @@ project:
   
   
 website:
-  repo-url: https://github.com/quarto-dev/quarto-demo
+  repo-url: https://github.com/scelmendorf/data_qa
   repo-actions: [issue]
   page-navigation: true
   sidebar:
