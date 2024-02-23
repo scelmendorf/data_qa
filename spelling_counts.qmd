@@ -62,7 +62,7 @@ df <- df %>%
   )
 ```
 
-Check your work!
+Check your work. Did you fix everything you intended to? Did you inadvertently break anything else in the process?
 
 ```{r check your work, eval = FALSE}
 View(df %>%
@@ -102,7 +102,7 @@ df_space_removal <- df %>%
 dup_check <- janitor::get_dupes(df_space_removal, hybrid_no_space)
 ```
 
-Before applying this we want to check that all sets of names we have 'combined' make sense. You would want to check the whole list, but just a few are displayed here for brevity.
+Before applying this we want to check that all sets of names we have 'combined' make sense. You would want to check the whole list, but just a few are displayed here for brevity. Using the `get_dupes` function we can see how multiple spacings have been removed, and check whether what we have done was sensible.
 
 ```{r display space changes, echo = FALSE}
 knitr::kable(head(dup_check, 20))

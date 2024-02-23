@@ -2,7 +2,6 @@
 title: "6. Geocoordinates"
 ---
 
-
 ```{r load packages, message=FALSE, warning=FALSE}
 library(tidyverse) # general data wrangling
 ```
@@ -22,7 +21,7 @@ write.csv(df, "example_data/geocoordinates_example.csv", row.names = F)
 df <- read.csv("example_data/geocoordinates_example.csv")
 ```
 
-Many of the tricks in [module 4](data_in_range.qmd) also apply here, but sometimes there is no substitute for a map. We can make a basic map using ggplot. 
+Many of the tricks in we learned in [Data in range](data_in_range.qmd) also apply here, but sometimes there is no substitute for a map. We can make a basic map using ggplot.
 
 ```{r basic ggplot map data, eval = TRUE}
 # create data for world coordinates using map_data() function
@@ -99,8 +98,8 @@ map <- leaflet::leaflet() %>%
   )
 mapview::mapshot(x = map, file = "figures/example_geocations.png")
 ```
-![](figures/figures/example_geocations.png)
 
+![](figures/figures/example_geocations.png)
 
 You may ask yourself - did I sample in Asia? If not, quite likely some of your longitudes are lacking the sign convention to tell you that they are sampled in the western hemisphere. If you have done this, you are not alone! For example, can you see the "mirror image" of the US species occurrence records here in the raw data submitted to [GBIF](https://www.gbif.org/)?
 
