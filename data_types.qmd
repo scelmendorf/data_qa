@@ -11,6 +11,7 @@ library(tidyverse) # general data wrangling
 
 ```{r create data, include = FALSE}
 df <- read.csv("example_data/sunflower_data.csv")
+
 df <- df %>%
   select(
     harvest_date, harvest_moisture_pct, height_in, planting_date,
@@ -62,21 +63,48 @@ To understand a little bit about the data, it can be helpful to get a brief summ
 dplyr::glimpse(df)
 ```
 
-A glimpse at our dataset tells us something about its structure. Ideally, you are the data collector and already know all of this. The first column (X) appears to be an index variable. Sometimes this is intentional; more often it occurs when people write out files in R and forget to include the `row.names = F` argument. Some things should strike you as potentially problematic about this dataset:
+A glimpse at our dataset tells us something about its structure. Ideally, you are the data collector and already know all of this. The first column (X) appears to be an index variable. Sometimes this is intentional; more often it occurs when people write out files in R and forget to include the `row.names = F` argument.
+
+**Some things should strike you as potentially problematic about this dataset:**
 
 1.  There are two date fields, but one is encoded as a character and one as an integer.
 2.  Height (with units inches) is encoded as a character.
 
-It is very easy to convert everything that *should* be numeric into a numeric field, but at the risk of wiping out actual data. Better is to suss out what those mystery values are, and why they are there in the first place.
+It is very easy to convert everything that *should* be numeric into a numeric field, but doing this blindly risks wiping out actual data. For example - what if all the low values were entered as 'below detection level'. Setting all those values to 'NA' would bias the results. It's important to suss out what those mystery values are, and why they are there in the first place.
 
 There surely is an existing R package that does this more elegantly, but I have yet to discover it. So I wrote a short function that iterates across columns and pulls out all rows of data that cannot successfully be converted to a numeric value. This function (check_non_numeric) is designed to check if a specified column in a dataframe contains non-numeric values. The function takes two arguments: df, which is the dataframe to be checked, and var, which is the name of the column in the dataframe to be checked.
 
+Copy the function below to use in the next set of code.
+
+```{r define customized function to look for non-numeric values in data frame}
+# Function to find non-numeric values in a column and inspect
+
+# @param df data frame
+# @param var variable to check
+# @return data frame with non-numeric values
+check_non_numeric <- function(df, var) {
+  row_probs <- which(!is.na(df[[var]]) & is.na(suppressWarnings(as.numeric(df[[var]]))))
+  if (length(row_probs > 0)) {
+    warning(paste("Check file for", var, "\n"))
+    return(df[row_probs, ])
+  } else {
+    cat(paste("all values are numeric for ", var, "\n"))
+    return(NULL)
+  }
+}
+```
+
+To inspect our data for possible problems in numeric columns, we need to first define all columns that we think should be numeric. Since the majority of the data appear to be numeric, it's often easier to just define which variables are NOT numeric, and test the remaining set.
+
 ```{r define numeric columns}
-source("functions/functions.R")
-# define numeric columns
+# define numeric columns as all of those that aren't non-numeric
 non_numeric_cols <- "Hybrid"
 numeric_cols <- setdiff(names(df), non_numeric_cols)
+```
 
+We can now iterate over all the columns we think should contain numeric data and look for problems.
+
+```{r check each column}
 # set up a list to put numeric check results into
 all_checks <- list()
 
@@ -88,6 +116,8 @@ for (i in numeric_cols) {
 names(all_checks)
 ```
 
+The function has told use we have some non-numeric values in the variables "height_in" and "planting date". Let's look at what these problems are to determine what to do about them.
+
 ```{r view problems, eval = FALSE}
 View(all_checks[["height_in"]])
 ```
@@ -96,7 +126,7 @@ View(all_checks[["height_in"]])
 knitr::kable(all_checks[["height_in"]], format = "html")
 ```
 
-We can see from the above there are two different missing value codes included in the height column. Having confidence in the issues, we can now set those to a proper missing value code. Here I'm going to run on the assumption that these two missing value codes may be found elsewhere, and replace them everywhere
+We can see from the above there are two different missing value codes included in the height column. Having confidence in the issues, we can now set those to a proper missing value code. Here I'm going to run on the assumption that these two missing value codes may be found elsewhere, and replace them everywhere using the `replace_with_na_all` function. Note we could have also addressed this by defining multiple missing value codes when we initially read in the data.
 
 ```{r replace missing}
 # replace non-standard missing value codes
@@ -106,10 +136,7 @@ df <- df %>% replace_with_na_all(
 )
 ```
 
-```{r what else is wrong missing}
-# resulting list will just have the things you still need to check
-names(all_checks)
-```
+Next, let's inspect the planting date problems.
 
 ```{r view problems in planting date, eval = FALSE}
 View(all_checks[["planting_date"]])
@@ -119,7 +146,17 @@ View(all_checks[["planting_date"]])
 knitr::kable(head(all_checks[["planting_date"]], 10), format = "html")
 ```
 
-It appears that some of the data have dates encoded as an 8 digit integer YYYYMMDD while others have M/D/YYYY. With this information, we can standardize the dates two ways, and then consolidate into a single, proper date column
+It appears that some of the data have dates entered as M/D/YYYY. To determine what to do about this, we need to see all the date formats that can be encountered.
+
+```{r example code to view unique values, eval = FALSE}
+unique(sort(df[["planting_date"]], decreasing = TRUE))
+```
+
+```{r lets look at unique planting dates, echo = FALSE}
+knitr::kable(data.frame(planting_date = sort(unique(df[["planting_date"]]), decreasing = TRUE)[1:10]), format = "html")
+```
+
+In this dataset, sometimes the date is encoded as an 8 digit integer YYYYMMDD while others have M/D/YYYY. Based on this information, we can use the lubridate package to interpret the dates entered in either format, and then consolidate into a single, proper date column. You will get some warnings! This is to be expected as we know that the date formatting differs among rows.
 
 ```{r fix planting date}
 df <- df %>%
@@ -148,7 +185,7 @@ knitr::kable(df %>%
   distinct(), format = "html")
 ```
 
-Finally, we can remove the temporary columns we created, and set all our remaining columns to the correct column types
+Finally, we can remove the temporary columns we created, and set all our remaining columns to the correct column types.
 
 ```{r final fixes to data types, echo = TRUE}
 # re define numeric columns - this time leaving off date

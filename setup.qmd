@@ -1,5 +1,5 @@
 ---
-title: "Setup"
+title: "0. Setup"
 ---
 
 This tutorial relies on a number of published packages. You can install anything you are missing using the code snippet below.
@@ -20,21 +20,12 @@ lapply(packReq, function(x) {
 })
 ```
 
-Sarah is still trying to figure out if I need to put it in a gist or if its possible to source files from elsewhere, but for now here is this useful function you will need to use for the [data types](data_types.qmd) example.
+We will be working with some example data. To follow along exactly with the paths in this tutorial, you will need to create a folder called 'example_data' and download the following files into that location. The example_data should be within your working directory for Rstudio (if you want to copy and paste code snippets without changing paths).
 
-```{r define customized function to look for non-numeric values in data frame}
-# Function if a variable in a data frame is non-numeric
-# @param df data frame
-# @param var variable to check
-# @return data frame with non-numeric values
-check_non_numeric <- function(df, var) {
-  row_probs <- which(!is.na(df[[var]]) & is.na(suppressWarnings(as.numeric(df[[var]]))))
-  if (length(row_probs > 0)) {
-    warning(paste("Check file for", var, "\n"))
-    return(df[row_probs, ])
-  } else {
-    cat(paste("all values are numeric for ", var, "\n"))
-    return(NULL)
-  }
-}
-```
+[sunflower_data_broken.csv](http://nwt.colorado.edu/tutorial_example_data/sunflower_data_broken.csv)
+
+[geocoordinates_example.csv](http://nwt.colorado.edu/tutorial_example_data/geocoordinates_example.csv)
+
+[time_zones.csv](http://nwt.colorado.edu/tutorial_example_data/time_zones.csv)
+
+

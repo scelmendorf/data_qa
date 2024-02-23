@@ -6,22 +6,6 @@ Inspired by common errors I have found in my own (and others) data, this website
 
 This is a work in progress!
 
-1.  Strings mixed with numbers and dates
+If you find errors in the tutorial, please make a git issue [here](https://github.com/scelmendorf/data_qa/issues)
 
-2.  Missing data
-
-3.  Duplicate data
-
-4.  Data in range
-
-5.  Spelling (unfortunately) counts
-
-6.  Geocoordinates
-
-7.  Time zones
-
-8.  Logic checks
-
-9.  Data vis for quality control - generic
-
-10. Data vis for quality control - customized
+I find online tutorials 'stick' better when you work through them with a friend, so I encourage everyone to grab a partner and dig in. Sample datasets are included, but the idea is to use these tools to qc your own data, so feel free to swap in a dataset of your choosing.

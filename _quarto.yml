@@ -13,26 +13,16 @@ website:
     style: "docked"
     search: true
     contents:
-      - section: "Overview"
-        contents:
         - index.qmd
         - setup.qmd
-      - section: "Data Types"
-        contents:
-          - data_types.qmd
-      - section: "Too much or too little"
-        contents:
-          - missing_data.qmd   
-          - duplicate_data.qmd 
-      - section: "Wrong data"
-        contents:
-          - data_in_range.qmd  
-          - spelling_counts.qmd 
-          - geocoordinates.qmd 
-          - time_zones.qmd 
-          - logic_tests.qmd 
-
-
+        - data_types.qmd
+        - missing_data.qmd   
+        - duplicate_data.qmd 
+        - data_in_range.qmd  
+        - spelling_counts.qmd 
+        - geocoordinates.qmd 
+        - time_zones.qmd 
+        - logic_tests.qmd 
 
 format:
   html:

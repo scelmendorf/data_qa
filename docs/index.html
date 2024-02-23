@@ -88,96 +88,56 @@ ul.task-list li input[type="checkbox"] {
       </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Overview</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link active">8ish simple rules for quality controlling your data</a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./setup.html" class="sidebar-item-text sidebar-link">Setup</a>
+  <a href="./setup.html" class="sidebar-item-text sidebar-link">0. Setup</a>
   </div>
 </li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">Data Types</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./data_types.html" class="sidebar-item-text sidebar-link">1. Scrambled data types</a>
   </div>
 </li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">Too much or too little</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./missing_data.html" class="sidebar-item-text sidebar-link">2. Missing data</a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./duplicate_data.html" class="sidebar-item-text sidebar-link">3. Duplicated Data</a>
   </div>
 </li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">Wrong data</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./data_in_range.html" class="sidebar-item-text sidebar-link">4. Data in range</a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./spelling_counts.html" class="sidebar-item-text sidebar-link">5. Spelling counts</a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./geocoordinates.html" class="sidebar-item-text sidebar-link">6. Geocoordinates</a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./time_zones.html" class="sidebar-item-text sidebar-link">7. Time zones</a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./logic_tests.html" class="sidebar-item-text sidebar-link">8. Logic tests</a>
   </div>
 </li>
-      </ul>
-  </li>
     </ul>
     </div>
 </nav>
@@ -206,18 +166,8 @@ ul.task-list li input[type="checkbox"] {
 
 <p>Inspired by common errors I have found in my own (and others) data, this website contains 10 simple rules for checking your own data. It is aimed at common problems found in tabular data, how to find them and how to fix them!</p>
 <p>This is a work in progress!</p>
-<ol type="1">
-<li><p>Strings mixed with numbers and dates</p></li>
-<li><p>Missing data</p></li>
-<li><p>Duplicate data</p></li>
-<li><p>Data in range</p></li>
-<li><p>Spelling (unfortunately) counts</p></li>
-<li><p>Geocoordinates</p></li>
-<li><p>Time zones</p></li>
-<li><p>Logic checks</p></li>
-<li><p>Data vis for quality control - generic</p></li>
-<li><p>Data vis for quality control - customized</p></li>
-</ol>
+<p>If you find errors in the tutorial, please make a git issue <a href="https://github.com/scelmendorf/data_qa/issues">here</a></p>
+<p>I find online tutorials ‘stick’ better when you work through them with a friend, so I encourage everyone to grab a partner and dig in. Sample datasets are included, but the idea is to use these tools to qc your own data, so feel free to swap in a dataset of your choosing.</p>
 
 
 
@@ -325,7 +275,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
   <div class="nav-page nav-page-next">
       <a href="./setup.html" class="pagination-link">
-        <span class="nav-page-text">Setup</span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text">0. Setup</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
