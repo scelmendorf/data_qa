@@ -6,7 +6,7 @@ title: "7. Time zones"
 library(tidyverse) # general data wrangling
 ```
 
-Time zones and loggers set to the wrong time zone are a special kind of misery. Countless [blogs](https://www.r-bloggers.com/2018/07/a-tour-of-timezones-troubles-in-r/) have been written about this particular misery, which I will not repeat here. But suffice it to say it is important to understand the time-zone of your data, if time is important!
+Time zones and loggers set to the wrong time zone are a special kind of misery. Countless [blogs](https://www.r-bloggers.com/2018/07/a-tour-of-timezones-troubles-in-r/) have been written about this particular form of 'what-went-wrong' torture, so if you find yourselves in a misery-needs-company mindset with regards to time-zones, a whole warren of rabbit holes of possible helpful advice exists in the interwebs. But suffice it to say it is important to understand the time-zone of your data, if time is important!
 
 ```{r make fake data, eval = FALSE, echo= FALSE}
 df <- read.csv("C:/Users/Sarah/Documents/COMPLETED/PKG_238_bs_temp_moist_sens/clean_2023/bs_soilsensors.jm.data.csv",
@@ -25,12 +25,16 @@ df <- df %>%
 write.csv(df, "example_data/time_zones.csv", row.names = FALSE)
 ```
 
+We'll start by reading some sensor data from Niwot Ridge and doing a quick inspection as to what variables might clue us into the time zone.
+
 ```{r read data}
 df <- read.csv("example_data/time_zones.csv") %>%
   mutate(date_time = lubridate::ymd_hms(date_time))
+
+glimpse(df)
 ```
 
-Oftentimes, a plot is enough to sort this out. It helps to zoom way on in on particular period to see the time of day.
+Helpfully, this dataset contains air temperature, which can give us some rough clues to the time zone, if it's not specified in the dataset or metadata. Oftentimes, a plot is enough to sort this out. It helps to zoom way on in on particular period to see the time of day.
 
 ```{r plot data, eval = TRUE}
 # Plots a scatter plot of temperature against date_time for the first 40 rows of the input dataframe.
@@ -39,7 +43,7 @@ ggplot(head(df, 40), aes(x = date_time, y = temperature)) +
   theme_classic()
 ```
 
-The sun only shines during the day, so variables like PAR and temperature are helpful indicators here. It is unusual for the temperature to peak just before noon. In this case, the data appear to be in UTC. Sometimes this is desirable! Other times, you may want to convert the timezone to local.
+The sun only shines during the day, so variables like PAR and temperature are helpful indicators here. As anyone who has hiked around in the morning and afternoon is probably aware, typically the hottest tiems of day are \~4pm and it's pretty unusual for the temperature to peak just before noon. In this case, the data appear to be in UTC. Sometimes UTC time is just what you want! Other times, you may want to convert the timezone to local.
 
 ```{r fix time zones, eval = TRUE}
 # Mutates the 'date_time_colorado' column of the dataframe 'df' to force the timezone to 'America/Denver'.
@@ -51,7 +55,8 @@ As always, check your work before proceeding!
 
 ```{r plot new times}
 # Plots temperature data against date_time in two different time zones.
-# The first plot shows the temperature data in UTC time zone, while the second plot shows the temperature data in Colorado time zone.
+# The first plot shows the temperature data in UTC time zone, while the second plot
+# shows the temperature data in Colorado time zone.
 # The data used for the plot is the first 40 rows of the dataframe 'df'.
 # The plot includes a legend that shows the color mapping for each time zone.
 ggplot(head(df, 40), aes(x = date_time, y = temperature, color = "black")) +

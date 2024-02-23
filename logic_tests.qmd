@@ -31,7 +31,7 @@ df <- read_csv("example_data/sunflower_data_1.csv")
 
 ```
 
-In our particular example, we will check whether emergence follows planting and harvest follows emergence.
+In our particular example, we will impose an order test to check whether emergence follows planting and harvest follows emergence.
 
 ```{r check date ordering, eval = TRUE}
 View(df %>%

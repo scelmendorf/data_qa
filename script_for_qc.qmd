@@ -1,0 +1,39 @@
+---
+title: 9. Scripted workflows
+---
+
+Today's tutorial has focused on discovering and correcting issues in single dataset. As you work through your own data, you will likely want to make a single script that reads in the raw data, addresses any data quality issues, and writes out an 'analysis-ready' dataset. For this type of script, the interactive elements (View, summarytools, etc) are likely to be cumbersome.
+
+For building up an end-to-end analysis workflow, it is best to [*Keep Raw Data Raw*](https://dataoneorg.github.io/Education/bestpractices/preserve-information-keep).
+
+This means making your original data read-only, and writing a script (with good documentation!) that can be rerun as needed to rename columns, remove outliers etc.
+
+With this workflow a simple one line of code such as `source('clean_my_data.R')` can be run and re-run as often as needed.
+
+I usually include a function to generate a series of plots appropriate to the dataset in hand as part of this scripted workflow. Sometimes no amount of logic checks can illuminate the possible problems you might encounter as much as a visual aid can.
+
+Some tips: plotting this year's data on top of last year's data, or coloring points by location, data collector, etc can help spot errors due to changes in protocols, sensor swaps, or miskeyed data.
+
+When I have multiple variables to look through, I usually prefer to set up a common type of plot, iterate through all the variables, and dump the results into a pdf that I can flip through later or share with collaborators rather than viewing things only in Rstudio's plot window, or having a zillion .jpgs to flip through.
+
+
+
+```{r plots to pdf}
+library (tidyverse)
+df <-read.csv ('example_data/sunflower_data_1.csv') %>%
+  mutate(planting_date = lubridate::ymd(planting_date),
+         harvest_date = lubridate::ymd(harvest_date),
+         emergence_date = lubridate::ymd(emergence_date))
+non_numeric_cols <- "hybrid"
+numeric_cols <- setdiff(names(df), non_numeric_cols)
+
+
+#remember to make a figures directory first
+pdf("figures/qcplots.pdf", 7, 5)
+for (var in numeric_cols) {
+#df$var <- df[[var]] # this should work but I think hates the spaces? # myplot = ggplot(mydata, aes(x= !!var))+
+# quick glance at the time series while you have the sheets in hand
+myplot <- ggplot(df, aes( y = .data[[var]], x = year, color = hybrid )) + geom_jitter(width = 0.2, height = 0, show.legend = FALSE) + ylab(var) 
+print(myplot) }
+dev.off()
+```

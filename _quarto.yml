@@ -23,6 +23,9 @@ website:
         - geocoordinates.qmd 
         - time_zones.qmd 
         - logic_tests.qmd 
+        - script_for_qc.qmd 
+        - datacleanr.qmd 
+        - other_resources.qmd
 
 format:
   html:

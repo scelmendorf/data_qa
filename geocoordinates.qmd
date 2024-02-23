@@ -81,7 +81,7 @@ leaflet::leaflet() %>%
   )
 ```
 
-```{r save map image, echo = FALSE}
+```{r save map image, echo = FALSE, eval = FALSE}
 map <- leaflet::leaflet() %>%
   leaflet::addWMSTiles(., GetURL("USGSImageryTopo"),
     group = "USGS Imagery Topo", attribution = att, layers = "0"
@@ -90,13 +90,13 @@ map <- leaflet::leaflet() %>%
     data = df,
     lng = ~long, lat = ~lat,
     color = ~"orange",
-    radius = 20000,
+    radius = 30000,
     stroke = TRUE,
     opacity = 5,
     weight = 1,
     fillOpacity = 1
   )
-mapview::mapshot(x = map, file = "figures/example_geocations.png")
+# mapview::mapshot(x = map, file = "figures/example_geocations.png")
 ```
 
 ![](figures/figures/example_geocations.png)

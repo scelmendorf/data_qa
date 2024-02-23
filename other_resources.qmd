@@ -1,0 +1,7 @@
+---
+title: "Other resources"
+---
+
+Depending on how often you need to qc the same type of data, it may be worth investing the time to write a script that automates a report or generating figures.
+
+The [pointblank](https://rstudio.github.io/pointblank/index.html) package can run a suite of custom-defined validation functions in a data quality reporting workflow that generates a data quality analysis report. It can also work directly with database tables, not just files stored locally.

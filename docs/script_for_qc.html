@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>7. Time zones</title>
+<title>9. Scripted workflows</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -93,8 +93,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./logic_tests.html" rel="next">
-<link href="./geocoordinates.html" rel="prev">
+<link href="./datacleanr.html" rel="next">
+<link href="./logic_tests.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -134,7 +134,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">7. Time zones</h1>
+      <h1 class="quarto-secondary-nav-title">9. Scripted workflows</h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -194,12 +194,27 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./time_zones.html" class="sidebar-item-text sidebar-link active">7. Time zones</a>
+  <a href="./time_zones.html" class="sidebar-item-text sidebar-link">7. Time zones</a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./logic_tests.html" class="sidebar-item-text sidebar-link">8. Logic tests</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./script_for_qc.html" class="sidebar-item-text sidebar-link active">9. Scripted workflows</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./datacleanr.html" class="sidebar-item-text sidebar-link">10. Interactive data qa and data viz (Shiny apps)</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./other_resources.html" class="sidebar-item-text sidebar-link">Other resources</a>
   </div>
 </li>
     </ul>
@@ -214,7 +229,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block">7. Time zones</h1>
+<h1 class="title d-none d-lg-block">9. Scripted workflows</h1>
 </div>
 
 
@@ -228,61 +243,88 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
+<p>Today’s tutorial has focused on discovering and correcting issues in single dataset. As you work through your own data, you will likely want to make a single script that reads in the raw data, addresses any data quality issues, and writes out an ‘analysis-ready’ dataset. For this type of script, the interactive elements (View, summarytools, etc) are likely to be cumbersome.</p>
+<p>For building up an end-to-end analysis workflow, it is best to <a href="https://dataoneorg.github.io/Education/bestpractices/preserve-information-keep"><em>Keep Raw Data Raw</em></a>.</p>
+<p>This means making your original data read-only, and writing a script (with good documentation!) that can be rerun as needed to rename columns, remove outliers etc.</p>
+<p>With this workflow a simple one line of code such as <code>source('clean_my_data.R')</code> can be run and re-run as often as needed.</p>
+<p>I usually include a function to generate a series of plots appropriate to the dataset in hand as part of this scripted workflow. Sometimes no amount of logic checks can illuminate the possible problems you might encounter as much as a visual aid can.</p>
+<p>Some tips: plotting this year’s data on top of last year’s data, or coloring points by location, data collector, etc can help spot errors due to changes in protocols, sensor swaps, or miskeyed data.</p>
+<p>When I have multiple variables to look through, I usually prefer to set up a common type of plot, iterate through all the variables, and dump the results into a pdf that I can flip through later or share with collaborators rather than viewing things only in Rstudio’s plot window, or having a zillion .jpgs to flip through.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># general data wrangling</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'tidyverse' was built under R version 4.2.3</code></pre>
 </div>
-<p>Time zones and loggers set to the wrong time zone are a special kind of misery. Countless <a href="https://www.r-bloggers.com/2018/07/a-tour-of-timezones-troubles-in-r/">blogs</a> have been written about this particular form of ‘what-went-wrong’ torture, so if you find yourselves in a misery-needs-company mindset with regards to time-zones, a whole warren of rabbit holes of possible helpful advice exists in the interwebs. But suffice it to say it is important to understand the time-zone of your data, if time is important!</p>
-<div class="cell">
-
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'ggplot2' was built under R version 4.2.3</code></pre>
 </div>
-<p>We’ll start by reading some sensor data from Niwot Ridge and doing a quick inspection as to what variables might clue us into the time zone.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"example_data/time_zones.csv"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_time =</span> lubridate<span class="sc">::</span><span class="fu">ymd_hms</span>(date_time))</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'tibble' was built under R version 4.2.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'tidyr' was built under R version 4.2.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'purrr' was built under R version 4.2.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'dplyr' was built under R version 4.2.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'stringr' was built under R version 4.2.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'forcats' was built under R version 4.2.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.1     ✔ readr     2.1.3
+✔ forcats   1.0.0     ✔ stringr   1.5.0
+✔ ggplot2   3.4.2     ✔ tibble    3.2.1
+✔ lubridate 1.9.0     ✔ tidyr     1.3.0
+✔ purrr     1.0.1     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span><span class="fu">read.csv</span> (<span class="st">'example_data/sunflower_data_1.csv'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">planting_date =</span> lubridate<span class="sc">::</span><span class="fu">ymd</span>(planting_date),</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">harvest_date =</span> lubridate<span class="sc">::</span><span class="fu">ymd</span>(harvest_date),</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">emergence_date =</span> lubridate<span class="sc">::</span><span class="fu">ymd</span>(emergence_date))</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>non_numeric_cols <span class="ot">&lt;-</span> <span class="st">"hybrid"</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>numeric_cols <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(df), non_numeric_cols)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#remember to make a figures directory first</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"figures/qcplots.pdf"</span>, <span class="dv">7</span>, <span class="dv">5</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (var <span class="cf">in</span> numeric_cols) {</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">#df$var &lt;- df[[var]] # this should work but I think hates the spaces? # myplot = ggplot(mydata, aes(x= !!var))+</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co"># quick glance at the time series while you have the sheets in hand</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>myplot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df, <span class="fu">aes</span>( <span class="at">y =</span> .data[[var]], <span class="at">x =</span> year, <span class="at">color =</span> hybrid )) <span class="sc">+</span> <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">height =</span> <span class="dv">0</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span> <span class="fu">ylab</span>(var) </span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(myplot) }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 1054 rows containing missing values (`geom_point()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 656 rows containing missing values (`geom_point()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 398 rows containing missing values (`geom_point()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 73 rows containing missing values (`geom_point()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 1333 rows containing missing values (`geom_point()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 1124 rows containing missing values (`geom_point()`).</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 1,000
-Columns: 2
-$ date_time   &lt;dttm&gt; 2018-09-11 05:00:00, 2018-09-11 06:00:00, 2018-09-11 07:0…
-$ temperature &lt;dbl&gt; 9.475, 10.650, 11.449, 11.650, 11.871, 11.684, 11.234, 10.…</code></pre>
-</div>
-</div>
-<p>Helpfully, this dataset contains air temperature, which can give us some rough clues to the time zone, if it’s not specified in the dataset or metadata. Oftentimes, a plot is enough to sort this out. It helps to zoom way on in on particular period to see the time of day.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plots a scatter plot of temperature against date_time for the first 40 rows of the input dataframe.</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">head</span>(df, <span class="dv">40</span>), <span class="fu">aes</span>(<span class="at">x =</span> date_time, <span class="at">y =</span> temperature)) <span class="sc">+</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="time_zones_files/figure-html/plot%20data-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<p>The sun only shines during the day, so variables like PAR and temperature are helpful indicators here. As anyone who has hiked around in the morning and afternoon is probably aware, typically the hottest tiems of day are ~4pm and it’s pretty unusual for the temperature to peak just before noon. In this case, the data appear to be in UTC. Sometimes UTC time is just what you want! Other times, you may want to convert the timezone to local.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mutates the 'date_time_colorado' column of the dataframe 'df' to force the timezone to 'America/Denver'.</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_time_colorado =</span> <span class="fu">force_tz</span>(date_time, <span class="st">"America/Denver"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>As always, check your work before proceeding!</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plots temperature data against date_time in two different time zones.</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># The first plot shows the temperature data in UTC time zone, while the second plot</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># shows the temperature data in Colorado time zone.</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># The data used for the plot is the first 40 rows of the dataframe 'df'.</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># The plot includes a legend that shows the color mapping for each time zone.</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">head</span>(df, <span class="dv">40</span>), <span class="fu">aes</span>(<span class="at">x =</span> date_time, <span class="at">y =</span> temperature, <span class="at">color =</span> <span class="st">"black"</span>)) <span class="sc">+</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">show.legend =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">head</span>(df, <span class="dv">40</span>), <span class="fu">aes</span>(<span class="at">x =</span> date_time_colorado, <span class="at">y =</span> temperature, <span class="at">color =</span> <span class="st">"red"</span>)) <span class="sc">+</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_identity</span>(</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"Time zone"</span>,</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"red"</span>),</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="fu">c</span>(<span class="st">"UTC"</span>, <span class="st">"Colorado"</span>),</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">guide =</span> <span class="st">"legend"</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="time_zones_files/figure-html/plot%20new%20times-1.png" class="img-fluid" width="672"></p>
+<pre><code>png 
+  2 </code></pre>
 </div>
 </div>
 
@@ -389,13 +431,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./geocoordinates.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">6. Geocoordinates</span>
+      <a href="./logic_tests.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">8. Logic tests</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./logic_tests.html" class="pagination-link">
-        <span class="nav-page-text">8. Logic tests</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./datacleanr.html" class="pagination-link">
+        <span class="nav-page-text">10. Interactive data qa and data viz (Shiny apps)</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

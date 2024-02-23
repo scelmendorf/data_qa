@@ -174,7 +174,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./duplicate_data.html" class="sidebar-item-text sidebar-link">3. Duplicated Data</a>
+  <a href="./duplicate_data.html" class="sidebar-item-text sidebar-link">3. Duplicated sata</a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -200,6 +200,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./logic_tests.html" class="sidebar-item-text sidebar-link">8. Logic tests</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./script_for_qc.html" class="sidebar-item-text sidebar-link">9. Scripted workflows</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./datacleanr.html" class="sidebar-item-text sidebar-link">10. Interactive data qa and data viz (Shiny apps)</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./other_resources.html" class="sidebar-item-text sidebar-link">Other resources</a>
   </div>
 </li>
     </ul>
@@ -238,7 +253,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <p>To understand a little bit about the data, it can be helpful to get a brief summary of the contents</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">glimpse</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 2,685
 Columns: 9
@@ -250,7 +265,7 @@ $ planting_date        &lt;chr&gt; "19970529", "19970529", "19970529", "19970529
 $ yield_lb_acre        &lt;dbl&gt; 2542, 2179, 2510, 2225, 2208, 2326, 2319, 2224, 2…
 $ Year                 &lt;int&gt; 1997, 1997, 1997, 1997, 1997, 1997, 1997, 1997, 1…
 $ Hybrid               &lt;chr&gt; "AP2098", "AP3470", "AK7304", "AK7305", "AK7306",…
-$ emergence_date       &lt;int&gt; 19970533, 19970531, 19970531, 19970532, 19970532,…</code></pre>
+$ emergence_date       &lt;int&gt; 19970532, 19970533, 19970532, 19970533, 19970533,…</code></pre>
 </div>
 </div>
 <p>A glimpse at our dataset tells us something about its structure. Ideally, you are the data collector and already know all of this. The first column (X) appears to be an index variable. Sometimes this is intentional; more often it occurs when people write out files in R and forget to include the <code>row.names = F</code> argument.</p>
@@ -348,7 +363,7 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 2381 </td>
    <td style="text-align:right;"> 1997 </td>
    <td style="text-align:left;"> ST2117 </td>
-   <td style="text-align:right;"> 19970532 </td>
+   <td style="text-align:right;"> 19970536 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 475 </td>
@@ -408,7 +423,7 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 1032 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F30008NS,CL </td>
-   <td style="text-align:right;"> 20100524 </td>
+   <td style="text-align:right;"> 20100527 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 868 </td>
@@ -420,7 +435,7 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 1244 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F51122NS,CL </td>
-   <td style="text-align:right;"> 20100522 </td>
+   <td style="text-align:right;"> 20100523 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 869 </td>
@@ -432,7 +447,7 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 1290 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F51137NS,CL </td>
-   <td style="text-align:right;"> 20100523 </td>
+   <td style="text-align:right;"> 20100526 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 870 </td>
@@ -444,7 +459,7 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 1354 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F51139NS,DM,CL </td>
-   <td style="text-align:right;"> 20100524 </td>
+   <td style="text-align:right;"> 20100522 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 871 </td>
@@ -456,7 +471,7 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 1236 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F51313NS,DM,CL </td>
-   <td style="text-align:right;"> 20100524 </td>
+   <td style="text-align:right;"> 20100527 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 872 </td>
@@ -468,7 +483,7 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 664 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F89036NS,DM,CL </td>
-   <td style="text-align:right;"> 20100522 </td>
+   <td style="text-align:right;"> 20100523 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 873 </td>
@@ -480,7 +495,7 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 230 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F89057NS,SU </td>
-   <td style="text-align:right;"> 20100522 </td>
+   <td style="text-align:right;"> 20100525 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 874 </td>
@@ -504,7 +519,7 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 759 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> 306 DMR NS </td>
-   <td style="text-align:right;"> 20100527 </td>
+   <td style="text-align:right;"> 20100530 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> 876 </td>
@@ -516,7 +531,7 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 1592 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> 3080 DMR NS </td>
-   <td style="text-align:right;"> 20100526 </td>
+   <td style="text-align:right;"> 20100522 </td>
   </tr>
 </tbody>
 </table>
@@ -651,7 +666,7 @@ Caused by warning:
 <pre><code>Warning: There was 1 warning in `mutate()`.
 ℹ In argument: `emergence_date = lubridate::ymd(emergence_date)`.
 Caused by warning:
-!  279 failed to parse.</code></pre>
+!  272 failed to parse.</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -663,7 +678,7 @@ $ height_in            &lt;dbl&gt; 57, 62, 56, 60, 58, 58, 66, 60, 60, 54, 54, 6
 $ yield_lb_acre        &lt;dbl&gt; 2542, 2179, 2510, 2225, 2208, 2326, 2319, 2224, 2…
 $ year                 &lt;int&gt; 1997, 1997, 1997, 1997, 1997, 1997, 1997, 1997, 1…
 $ hybrid               &lt;chr&gt; "AP2098", "AP3470", "AK7304", "AK7305", "AK7306",…
-$ emergence_date       &lt;date&gt; NA, 1997-05-31, 1997-05-31, NA, NA, NA, NA, 1997…
+$ emergence_date       &lt;date&gt; NA, NA, NA, NA, NA, NA, NA, 1997-05-31, NA, NA, …
 $ planting_date        &lt;date&gt; 1997-05-29, 1997-05-29, 1997-05-29, 1997-05-29, …</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(df, <span class="st">"example_data/sunflower_data_1.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

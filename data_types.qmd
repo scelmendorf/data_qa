@@ -60,7 +60,7 @@ df <- read.csv("example_data/sunflower_data_broken.csv")
 To understand a little bit about the data, it can be helpful to get a brief summary of the contents
 
 ```{r data exploration}
-dplyr::glimpse(df)
+glimpse(df)
 ```
 
 A glimpse at our dataset tells us something about its structure. Ideally, you are the data collector and already know all of this. The first column (X) appears to be an index variable. Sometimes this is intentional; more often it occurs when people write out files in R and forget to include the `row.names = F` argument.
