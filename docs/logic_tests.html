@@ -154,12 +154,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link">8ish simple rules for quality controlling your data</a>
+  <a href="./index.html" class="sidebar-item-text sidebar-link">10ish simple steps for quality controlling your data</a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./setup.html" class="sidebar-item-text sidebar-link">0. Setup</a>
+  <a href="./setup.html" class="sidebar-item-text sidebar-link">Setup</a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -174,7 +174,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./duplicate_data.html" class="sidebar-item-text sidebar-link">3. Duplicated sata</a>
+  <a href="./duplicate_data.html" class="sidebar-item-text sidebar-link">3. Duplicated data</a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -251,7 +251,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <p>Knowing particular things about your data will help you check for internal consistency and spot additional errors. For example, plants (usually) get larger over time, and it’s difficult to die before you are born.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#here we'll use the readr function read_csv to read our data</span></span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># here we'll use the readr function read_csv to read our data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># readr "knows" about dates, which can save us some typing</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"example_data/sunflower_data_1.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -286,52 +286,52 @@ date (3): harvest_date, emergence_date, planting_date
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">1999-06-04</td>
-<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-06-04</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">1999-06-05</td>
+<td style="text-align: left;">1999-06-05</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-07</td>
+<td style="text-align: left;">1999-06-06</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-08</td>
+<td style="text-align: left;">1999-06-05</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-09</td>
+<td style="text-align: left;">1999-06-07</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-10</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-11</td>
+<td style="text-align: left;">1999-06-09</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-12</td>
 <td style="text-align: left;">1999-06-02</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1999-06-06</td>
-<td style="text-align: left;">1999-06-03</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">1999-06-07</td>
+<td style="text-align: left;">1999-06-13</td>
 <td style="text-align: left;">1999-06-05</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">1999-06-08</td>
-<td style="text-align: left;">1999-06-04</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">1999-06-09</td>
-<td style="text-align: left;">1999-06-06</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">1999-06-10</td>
-<td style="text-align: left;">1999-06-08</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">1999-06-11</td>
-<td style="text-align: left;">1999-06-04</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">1999-06-12</td>
-<td style="text-align: left;">1999-06-06</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">1999-06-14</td>
-<td style="text-align: left;">1999-06-02</td>
+<td style="text-align: left;">1999-06-04</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
@@ -341,27 +341,27 @@ date (3): harvest_date, emergence_date, planting_date
 </tr>
 <tr class="even">
 <td style="text-align: left;">1999-06-16</td>
-<td style="text-align: left;">1999-06-05</td>
+<td style="text-align: left;">1999-06-02</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">1999-06-17</td>
-<td style="text-align: left;">1999-06-04</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">1999-06-18</td>
-<td style="text-align: left;">1999-06-04</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">1999-06-19</td>
 <td style="text-align: left;">1999-06-03</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">1999-06-18</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-19</td>
+<td style="text-align: left;">1999-06-06</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">1999-06-20</td>
-<td style="text-align: left;">1999-06-07</td>
+<td style="text-align: left;">1999-06-04</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
@@ -376,7 +376,7 @@ date (3): harvest_date, emergence_date, planting_date
 </tr>
 <tr class="odd">
 <td style="text-align: left;">1999-06-23</td>
-<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-06-07</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
@@ -386,7 +386,7 @@ date (3): harvest_date, emergence_date, planting_date
 </tr>
 <tr class="odd">
 <td style="text-align: left;">1999-06-25</td>
-<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-06-05</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
@@ -396,12 +396,12 @@ date (3): harvest_date, emergence_date, planting_date
 </tr>
 <tr class="odd">
 <td style="text-align: left;">1999-06-27</td>
-<td style="text-align: left;">1999-06-05</td>
+<td style="text-align: left;">1999-06-04</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">1999-06-28</td>
-<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-06-06</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
@@ -411,32 +411,32 @@ date (3): harvest_date, emergence_date, planting_date
 </tr>
 <tr class="even">
 <td style="text-align: left;">1999-06-30</td>
-<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-06-08</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">1999-07-01</td>
-<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-06-05</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">1999-07-02</td>
-<td style="text-align: left;">1999-06-12</td>
+<td style="text-align: left;">1999-06-03</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">1999-07-03</td>
-<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-06-06</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">1999-07-04</td>
-<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-06-05</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">1999-07-05</td>
-<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-06-10</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
@@ -446,12 +446,12 @@ date (3): harvest_date, emergence_date, planting_date
 </tr>
 <tr class="odd">
 <td style="text-align: left;">1999-07-07</td>
-<td style="text-align: left;">1999-06-06</td>
+<td style="text-align: left;">1999-06-11</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">1999-07-08</td>
-<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-06-04</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
@@ -461,22 +461,22 @@ date (3): harvest_date, emergence_date, planting_date
 </tr>
 <tr class="even">
 <td style="text-align: left;">1999-07-10</td>
-<td style="text-align: left;">1999-06-05</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">1999-07-11</td>
-<td style="text-align: left;">1999-06-06</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">1999-07-12</td>
 <td style="text-align: left;">1999-06-04</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1999-07-13</td>
+<td style="text-align: left;">1999-07-11</td>
+<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-07-12</td>
 <td style="text-align: left;">1999-06-06</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-07-13</td>
+<td style="text-align: left;">1999-06-04</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 </tbody>

@@ -25,7 +25,7 @@ library(tidyverse) # general data wrangling
 Knowing particular things about your data will help you check for internal consistency and spot additional errors. For example, plants (usually) get larger over time, and it's difficult to die before you are born.
 
 ```{r read data}
-#here we'll use the readr function read_csv to read our data
+# here we'll use the readr function read_csv to read our data
 # readr "knows" about dates, which can save us some typing
 df <- read_csv("example_data/sunflower_data_1.csv")
 
