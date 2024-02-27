@@ -33,6 +33,7 @@ format:
     css: styles.css
     toc: true
     code-copy: true
+    link-external-newwindow: true
 
 editor: visual
 

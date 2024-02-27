@@ -2,22 +2,6 @@
 title: "8. Logic tests"
 ---
 
-```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
-# install packages
-packReq <- c(
-  "tidyverse"
-)
-
-# Install and load all required packages
-lapply(packReq, function(x) {
-  print(x)
-  if (require(x, character.only = TRUE) == FALSE) {
-    install.packages(x)
-    library(x, character.only = TRUE)
-  }
-})
-```
-
 ```{r load packages, message=FALSE, warning=FALSE}
 library(tidyverse) # general data wrangling
 ```
@@ -27,11 +11,12 @@ Knowing particular things about your data will help you check for internal consi
 ```{r read data}
 # here we'll use the readr function read_csv to read our data
 # readr "knows" about dates, which can save us some typing
-df <- read_csv("example_data/sunflower_data_1.csv")
+df <- read_csv(file.path("example_data" , "sunflower_data_1.csv"),
+               show_col_types = FALSE)
 
 ```
 
-In our particular example, we will impose an order test to check whether emergence follows planting and harvest follows emergence.
+In our particular example there are 3 dates included, and we know for each individual they must occur in a particular order if they data were transcribed correctly. , we will impose an order test to check whether emergence follows planting and harvest follows emergence.
 
 ```{r check date ordering, eval = TRUE}
 View(df %>%

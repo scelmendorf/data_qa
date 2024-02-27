@@ -209,7 +209,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./datacleanr.html" class="sidebar-item-text sidebar-link">10. Interactive data qa and data viz (Shiny apps)</a>
+  <a href="./datacleanr.html" class="sidebar-item-text sidebar-link">10. Interactive data qc and data viz (Shiny apps)</a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -245,26 +245,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <p>This tutorial relies on a number of published packages. You can install anything you are missing using the code snippet below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install packages</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>packReq <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tidyverse"</span>, <span class="st">"lubridate"</span>, <span class="st">"naniar"</span>, <span class="st">"summarytools"</span>, <span class="st">"leaflet"</span>, <span class="st">"mapview"</span>, <span class="st">"datacleanr"</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Install and load all required packages</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">lapply</span>(packReq, <span class="cf">function</span>(x) {</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(x)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">require</span>(x, <span class="at">character.only =</span> <span class="cn">TRUE</span>) <span class="sc">==</span> <span class="cn">FALSE</span>) {</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">install.packages</span>(x)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">library</span>(x, <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># only need to do once</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("librarian")</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>packReq <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"tidyverse"</span>, <span class="st">"naniar"</span>, <span class="st">"summarytools"</span>, <span class="st">"leaflet"</span>, <span class="st">"datacleanr"</span>, <span class="st">"supportR"</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>librarian<span class="sc">::</span><span class="fu">shelf</span>(packReq)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We will be working with some example data. To follow along exactly with the paths in this tutorial, you will need to create a folder called ‘example_data’ and download the following files into that location. The example_data should be within your working directory for Rstudio (if you want to copy and paste code snippets without changing paths).</p>
+<p>We will be working with some example data. To follow along exactly with the paths in this tutorial, you will need to create a folder called ‘example_data’ and download the following files into that location. The example_data should be within your working directory for Rstudio (if you want to copy and paste code snippets without changing paths). Note you may need to copy the links below into a new browser window to download them, depending on your operating system</p>
 <p><a href="http://nwt.colorado.edu/tutorial_example_data/sunflower_data_broken.csv">sunflower_data_broken.csv</a></p>
 <p><a href="http://nwt.colorado.edu/tutorial_example_data/geocoordinates_example.csv">geocoordinates_example.csv</a></p>
 <p><a href="http://nwt.colorado.edu/tutorial_example_data/time_zones.csv">time_zones.csv</a></p>
-<p><a href="http://nwt.colorado.edu/tutorial_example_data/sunflower_data_1.csv">sunflower_data_1.csv</a></p>
-<p>Last, we will be using the summarytools package. This should work out-of-box for windows users. Mac users may need to install <a href="https://www.xquartz.org">XQuartz</a> if you haven’t already. Linux - I haven’t tried - thanks for being the guinea pig and please provide feedback any OS incompatibilities. As with all things R, fighting to get the right things installed is always half the battle…sorry about that! More troubleshooting of installing the summarytools package may be found <a href="https://github.com/dcomtois/summarytools/issues/67">here</a>; more info on getting R to play nicely with Xquartz in general can be found <a href="https://cran.r-project.org/bin/macosx/">here</a>.</p>
+<p>Last, we will be using the summarytools package. This should work out-of-box for windows users. Mac users may need to install <a href="https://www.xquartz.org">XQuartz</a> if you haven’t already. Linux - I haven’t tried…Linux users a thanks in advance for being the guinea pigs and please provide feedback any OS incompatibilities. As with all things R, fighting to get the right things installed is always half the battle…sorry about that! More troubleshooting of installing the summarytools package may be found <a href="https://github.com/dcomtois/summarytools/issues/67">here</a>; more info on getting R to play nicely with Xquartz in general can be found <a href="https://cran.r-project.org/bin/macosx/">here</a>.</p>
 <p>For today’s workshop, I would suggest spending no more than 10 minutes trying to get things installed; if you can’t make summarytools work, just work through the rest of the tutorial and/or partner up with a friend whose computer is better behaved and circle back to the install issues afterwards.</p>
 
 
@@ -366,6 +359,20 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return popup.innerHTML;
     });
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+    var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+      }
+    }
 });
 </script>
 <nav class="page-navigation">

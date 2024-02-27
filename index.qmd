@@ -4,8 +4,6 @@ title: "10ish simple steps for quality controlling your data"
 
 Inspired by common errors I have found in my own (and others) data, this website contains 10 simple rules for checking your own data. It is aimed at common problems found in tabular data, how to find them and how to fix them!
 
-This is a work in progress!
+This is a work in progress. If you find errors in the tutorial, please make a git issue [here](https://github.com/scelmendorf/data_qa/issues)
 
-If you find errors in the tutorial, please make a git issue [here](https://github.com/scelmendorf/data_qa/issues)
-
-I find online tutorials 'stick' better when you work through them with a friend, so I encourage everyone to grab a partner and dig in. Sample datasets are included, but the idea is to use these tools to qc your own data, so feel free to swap in a dataset of your choosing.
+I find online tutorials 'stick' better when you work through them with a friend, so I encourage everyone to grab a partner and dig in. Sample datasets are included, but the idea is to use these tools to check your own data, so feel free to swap in a dataset of your choosing.

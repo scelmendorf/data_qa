@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Other resources</title>
+<title>readme</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,7 +30,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./datacleanr.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -70,7 +69,7 @@ ul.task-list li input[type="checkbox"] {
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">Other resources</h1>
+      <h1 class="quarto-secondary-nav-title">(Untitled)</h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -150,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./other_resources.html" class="sidebar-item-text sidebar-link active">Other resources</a>
+  <a href="./other_resources.html" class="sidebar-item-text sidebar-link">Other resources</a>
   </div>
 </li>
     </ul>
@@ -158,32 +157,51 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#data-qc-repository" id="toc-data-qc-repository" class="nav-link active" data-scroll-target="#data-qc-repository">Data qc repository</a>
+  <ul class="collapse">
+  <li><a href="#content" id="toc-content" class="nav-link" data-scroll-target="#content">Content</a></li>
+  <li><a href="#contacts" id="toc-contacts" class="nav-link" data-scroll-target="#contacts">Contacts</a></li>
+  <li><a href="#motivation" id="toc-motivation" class="nav-link" data-scroll-target="#motivation">Motivation</a></li>
+  <li><a href="#acknowledgements" id="toc-acknowledgements" class="nav-link" data-scroll-target="#acknowledgements">Acknowledgements</a></li>
+  <li><a href="#disclaimer" id="toc-disclaimer" class="nav-link" data-scroll-target="#disclaimer">Disclaimer</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/scelmendorf/data_qa/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title d-none d-lg-block">Other resources</h1>
-</div>
 
 
+<section id="data-qc-repository" class="level1">
+<h1>Data qc repository</h1>
+<section id="content" class="level2">
+<h2 class="anchored" data-anchor-id="content">Content</h2>
+<p>This repository contains the code for a short tutorial on data qc.</p>
+</section>
+<section id="contacts" class="level2">
+<h2 class="anchored" data-anchor-id="contacts">Contacts</h2>
+<p>Sarah C. Elmendorf; sarah.elmendorf [at] colorado.edu</p>
+</section>
+<section id="motivation" class="level2">
+<h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
+<p>We all try to be as careful as possible when taking measurements in the field, entering data, calibrating instruments, but humans – and machines – make mistakes. Quality science relies on identifying these errors <em>before analyzing data</em> so that they can be corrected, removed, or addressed analytically. Statistical analysis is a required component of graduate education, but we are usually left to our own devices to figure out the all important data qc step that should precede any data analysis. This workshop is inspired by the most common errors I tend to find in my own (and others’) data. The structure is an interactive (or online) workshop using R to detect and correct common problems in tabular datasets. You will need a laptop with R/RStudio installed to get the most out of the session.</p>
+</section>
+<section id="acknowledgements" class="level2">
+<h2 class="anchored" data-anchor-id="acknowledgements">Acknowledgements</h2>
+<p>This work was developed as part of the Niwot Ridge LTER program (NSF DEB-2224439). Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.</p>
+</section>
+<section id="disclaimer" class="level2">
+<h2 class="anchored" data-anchor-id="disclaimer">Disclaimer</h2>
+<p>Code in this repository is available as-is.</p>
 
-<div class="quarto-title-meta">
 
-    
-    
-  </div>
-  
-
-</header>
-
-<p>Depending on how often you need to check the same type of data, it may be worth investing the time to write a script that automates a report or generating figures.</p>
-<p>The <a href="https://rstudio.github.io/pointblank/index.html">pointblank</a> package can run a suite of custom-defined validation functions in a data quality reporting workflow that generates a data quality analysis report. It can also work directly with database tables, not just files stored locally.</p>
-<p>The <a href="https://cran.r-project.org/web/packages/assertr/vignettes/assertr.html">assertr</a> package provides a suite of functions that can ensure a user-specified set of assertions are valid before allowing an analysis to proceed. It also includes some handy functions to check for multivariate outliers, rather than checking each variable separately.</p>
-
-
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -298,15 +316,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
 });
 </script>
-<nav class="page-navigation">
-  <div class="nav-page nav-page-previous">
-      <a href="./datacleanr.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">10. Interactive data qa and data viz (Shiny apps)</span>
-      </a>          
-  </div>
-  <div class="nav-page nav-page-next">
-  </div>
-</nav>
 </div> <!-- /content -->
 
 

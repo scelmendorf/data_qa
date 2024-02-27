@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>10. Interactive data qa and data viz (Shiny apps)</title>
+<title>10. Interactive data qc and data viz (Shiny apps)</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -134,7 +134,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">10. Interactive data qa and data viz (Shiny apps)</h1>
+      <h1 class="quarto-secondary-nav-title">10. Interactive data qc and data viz (Shiny apps)</h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -209,7 +209,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./datacleanr.html" class="sidebar-item-text sidebar-link active">10. Interactive data qa and data viz (Shiny apps)</a>
+  <a href="./datacleanr.html" class="sidebar-item-text sidebar-link active">10. Interactive data qc and data viz (Shiny apps)</a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -229,7 +229,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block">10. Interactive data qa and data viz (Shiny apps)</h1>
+<h1 class="title d-none d-lg-block">10. Interactive data qc and data viz (Shiny apps)</h1>
 </div>
 
 
@@ -243,16 +243,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<p>While an all-purpose workflow for data checking and qa can never cover all the idiosyncracies of each dataset, sometimes it’s a good place to start. If you find yourself in this situation, I recommend the <a href="https://github.com/the-Hull/datacleanr">datacleanr</a> package. This is an interactive tool that launches a shiny website for exploring your data. This tool also provides an interactive tool for flagging suspect data from plots, an especially handy feature. The package authors have made some really excellent in depth <a href="https://the-hull.github.io/datacleanr/">tutorials</a>. The basics of launching the app are below - so if you are person who likes to learn by trial and error and see what happens, follow the code below. Otherwise, peruse the linked <a href="https://the-hull.github.io/datacleanr/">tutorials</a>.</p>
-<div class="cell">
-
-</div>
+<p>While an all-purpose workflow for data checking and qc can never cover all the idiosyncracies of each dataset that a customized set of tests can, sometimes it’s a good place to start. If you find yourself in this situation, I recommend the <a href="https://github.com/the-Hull/datacleanr">datacleanr</a> package. This is an interactive tool that launches a shiny website for exploring your data. This tool also provides an interactive tool for flagging suspect data from plots, an especially handy feature. The package authors have made some really excellent in depth <a href="https://the-hull.github.io/datacleanr/">tutorials</a>. The basics of launching the app are below - so if you are person who likes to learn by trial and error and see what happens, follow the code below. Otherwise, peruse the linked <a href="https://the-hull.github.io/datacleanr/">tutorials</a>.</p>
 <p>Load packages</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (datacleanr) <span class="co"># for interactive data viz</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span><span class="fu">read.csv</span> (<span class="st">'example_data/sunflower_data_broken.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span><span class="fu">read.csv</span> (<span class="fu">file.path</span>(<span class="st">'example_data'</span>, <span class="st">'sunflower_data_broken.csv'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>dcr_app()</code> command launches the interactive app.</p>
 <div class="cell">
@@ -358,6 +355,20 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return popup.innerHTML;
     });
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+    var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+      }
+    }
 });
 </script>
 <nav class="page-navigation">

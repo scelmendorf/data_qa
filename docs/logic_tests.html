@@ -244,33 +244,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </header>
 
 <div class="cell">
-
-</div>
-<div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># general data wrangling</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Knowing particular things about your data will help you check for internal consistency and spot additional errors. For example, plants (usually) get larger over time, and it’s difficult to die before you are born.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># here we'll use the readr function read_csv to read our data</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># readr "knows" about dates, which can save us some typing</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"example_data/sunflower_data_1.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 2685 Columns: 8
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr  (1): hybrid
-dbl  (4): harvest_moisture_pct, height_in, yield_lb_acre, year
-date (3): harvest_date, emergence_date, planting_date
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(<span class="st">"example_data"</span> , <span class="st">"sunflower_data_1.csv"</span>),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<p>In our particular example, we will impose an order test to check whether emergence follows planting and harvest follows emergence.</p>
+<p>In our particular example there are 3 dates included, and we know for each individual they must occur in a particular order if they data were transcribed correctly. , we will impose an order test to check whether emergence follows planting and harvest follows emergence.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(df <span class="sc">%&gt;%</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(emergence_date <span class="sc">&lt;=</span> planting_date <span class="sc">|</span> emergence_date <span class="sc">&gt;=</span> harvest_date <span class="sc">|</span> harvest_date <span class="sc">&lt;=</span> planting_date) <span class="sc">%&gt;%</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(planting_date, emergence_date, harvest_date))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(df <span class="sc">%&gt;%</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(emergence_date <span class="sc">&lt;=</span> planting_date <span class="sc">|</span> emergence_date <span class="sc">&gt;=</span> harvest_date <span class="sc">|</span> harvest_date <span class="sc">&lt;=</span> planting_date) <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(planting_date, emergence_date, harvest_date))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>What is wrong with these data?</p>
 <div class="cell">
@@ -286,197 +273,192 @@ date (3): harvest_date, emergence_date, planting_date
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">1999-06-04</td>
-<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-06-03</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">1999-06-05</td>
-<td style="text-align: left;">1999-06-05</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">1999-06-07</td>
 <td style="text-align: left;">1999-06-06</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">1999-06-08</td>
-<td style="text-align: left;">1999-06-05</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
 <tr class="odd">
-<td style="text-align: left;">1999-06-09</td>
-<td style="text-align: left;">1999-06-07</td>
+<td style="text-align: left;">1999-06-08</td>
+<td style="text-align: left;">1999-06-03</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">1999-06-10</td>
+<td style="text-align: left;">1999-06-09</td>
 <td style="text-align: left;">1999-06-03</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1999-06-11</td>
-<td style="text-align: left;">1999-06-09</td>
+<td style="text-align: left;">1999-06-10</td>
+<td style="text-align: left;">1999-06-06</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">1999-06-12</td>
-<td style="text-align: left;">1999-06-02</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">1999-06-13</td>
+<td style="text-align: left;">1999-06-11</td>
 <td style="text-align: left;">1999-06-05</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-12</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
 <tr class="even">
-<td style="text-align: left;">1999-06-14</td>
-<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-06-13</td>
+<td style="text-align: left;">1999-06-06</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">1999-06-14</td>
+<td style="text-align: left;">1999-06-07</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">1999-06-15</td>
 <td style="text-align: left;">1999-06-03</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">1999-06-16</td>
+<td style="text-align: left;">1999-06-05</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-06-17</td>
 <td style="text-align: left;">1999-06-02</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1999-06-17</td>
-<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-06-18</td>
+<td style="text-align: left;">1999-06-04</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">1999-06-18</td>
+<td style="text-align: left;">1999-06-19</td>
 <td style="text-align: left;">1999-06-03</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1999-06-19</td>
-<td style="text-align: left;">1999-06-06</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">1999-06-20</td>
 <td style="text-align: left;">1999-06-04</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">1999-06-21</td>
-<td style="text-align: left;">1999-06-07</td>
+<td style="text-align: left;">1999-06-04</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">1999-06-22</td>
 <td style="text-align: left;">1999-06-03</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">1999-06-23</td>
-<td style="text-align: left;">1999-06-07</td>
+<td style="text-align: left;">1999-06-02</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">1999-06-24</td>
 <td style="text-align: left;">1999-06-03</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">1999-06-25</td>
-<td style="text-align: left;">1999-06-05</td>
+<td style="text-align: left;">1999-06-03</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">1999-06-26</td>
 <td style="text-align: left;">1999-06-04</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">1999-06-27</td>
-<td style="text-align: left;">1999-06-04</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
 <tr class="even">
-<td style="text-align: left;">1999-06-28</td>
+<td style="text-align: left;">1999-06-27</td>
 <td style="text-align: left;">1999-06-06</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">1999-06-28</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">1999-06-29</td>
+<td style="text-align: left;">1999-06-05</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-06-30</td>
 <td style="text-align: left;">1999-06-04</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">1999-06-30</td>
-<td style="text-align: left;">1999-06-08</td>
+<td style="text-align: left;">1999-07-01</td>
+<td style="text-align: left;">1999-06-03</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1999-07-01</td>
-<td style="text-align: left;">1999-06-05</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">1999-07-02</td>
 <td style="text-align: left;">1999-06-03</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">1999-07-03</td>
+<td style="text-align: left;">1999-06-08</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-07-04</td>
 <td style="text-align: left;">1999-06-06</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">1999-07-04</td>
+<td style="text-align: left;">1999-07-05</td>
 <td style="text-align: left;">1999-06-05</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1999-07-05</td>
-<td style="text-align: left;">1999-06-10</td>
+<td style="text-align: left;">1999-07-06</td>
+<td style="text-align: left;">1999-06-04</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">1999-07-06</td>
+<td style="text-align: left;">1999-07-07</td>
+<td style="text-align: left;">1999-06-05</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1999-07-08</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1999-07-09</td>
 <td style="text-align: left;">1999-06-03</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1999-07-07</td>
-<td style="text-align: left;">1999-06-11</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">1999-07-08</td>
-<td style="text-align: left;">1999-06-04</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">1999-07-09</td>
-<td style="text-align: left;">1999-06-04</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">1999-07-10</td>
-<td style="text-align: left;">1999-06-04</td>
-<td style="text-align: left;">1999-10-13</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">1999-07-11</td>
-<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-06-07</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">1999-07-12</td>
-<td style="text-align: left;">1999-06-06</td>
+<td style="text-align: left;">1999-07-11</td>
+<td style="text-align: left;">1999-06-05</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">1999-07-12</td>
+<td style="text-align: left;">1999-06-03</td>
+<td style="text-align: left;">1999-10-13</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">1999-07-13</td>
-<td style="text-align: left;">1999-06-04</td>
+<td style="text-align: left;">1999-06-03</td>
 <td style="text-align: left;">1999-10-13</td>
 </tr>
 </tbody>
@@ -585,6 +567,20 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return popup.innerHTML;
     });
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+    var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+      }
+    }
 });
 </script>
 <nav class="page-navigation">

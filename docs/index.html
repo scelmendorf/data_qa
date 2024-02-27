@@ -95,7 +95,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./setup.html" class="sidebar-item-text sidebar-link">0. Setup</a>
+  <a href="./setup.html" class="sidebar-item-text sidebar-link">Setup</a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -180,9 +180,8 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 <p>Inspired by common errors I have found in my own (and others) data, this website contains 10 simple rules for checking your own data. It is aimed at common problems found in tabular data, how to find them and how to fix them!</p>
-<p>This is a work in progress!</p>
-<p>If you find errors in the tutorial, please make a git issue <a href="https://github.com/scelmendorf/data_qa/issues">here</a></p>
-<p>I find online tutorials ‘stick’ better when you work through them with a friend, so I encourage everyone to grab a partner and dig in. Sample datasets are included, but the idea is to use these tools to qc your own data, so feel free to swap in a dataset of your choosing.</p>
+<p>This is a work in progress. If you find errors in the tutorial, please make a git issue <a href="https://github.com/scelmendorf/data_qa/issues">here</a></p>
+<p>I find online tutorials ‘stick’ better when you work through them with a friend, so I encourage everyone to grab a partner and dig in. Sample datasets are included, but the idea is to use these tools to check your own data, so feel free to swap in a dataset of your choosing.</p>
 
 
 
@@ -283,6 +282,20 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return popup.innerHTML;
     });
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+    var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+      }
+    }
 });
 </script>
 <nav class="page-navigation">
@@ -290,7 +303,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
   <div class="nav-page nav-page-next">
       <a href="./setup.html" class="pagination-link">
-        <span class="nav-page-text">0. Setup</span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text">Setup</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

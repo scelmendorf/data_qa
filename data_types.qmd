@@ -7,9 +7,11 @@ This module addresses common errors where string and/or missing data encoded as 
 ```{r load packages, message=FALSE, warning=FALSE}
 library(naniar) # to homogenize missing value codes
 library(tidyverse) # general data wrangling
+library(supportR) # for dealing with non-numeric or non-date values
 ```
 
 ```{r create data, include = FALSE}
+set.seed(12345)
 df <- read.csv("example_data/sunflower_data.csv")
 
 df <- df %>%
@@ -20,7 +22,7 @@ df <- df %>%
 
 # introduce errors
 df <- df %>%
-  # make heigh in 2004 centimeters
+  # make height in 2004 centimeters
   mutate(height_in = ifelse(Year == 2004, round(2.54 * height_in), height_in))
 
 # make up emergence_date
@@ -54,7 +56,7 @@ write.csv(df, "example_data/sunflower_data_broken.csv")
 ```
 
 ```{r read and explore data}
-df <- read.csv("example_data/sunflower_data_broken.csv")
+df <- read.csv(file.path("example_data", "sunflower_data_broken.csv"))
 ```
 
 To understand a little bit about the data, it can be helpful to get a brief summary of the contents
@@ -72,7 +74,13 @@ A glimpse at our dataset tells us something about its structure. Ideally, you ar
 
 It is very easy to convert everything that *should* be numeric into a numeric field, but doing this blindly risks wiping out actual data. For example - what if all the low values were entered as 'below detection level'. Setting all those values to 'NA' would bias the results. It's important to suss out what those mystery values are, and why they are there in the first place.
 
-There surely is an existing R package that does this more elegantly, but I have yet to discover it. So I wrote a short function that iterates across columns and pulls out all rows of data that cannot successfully be converted to a numeric value. This function (check_non_numeric) is designed to check if a specified column in a dataframe contains non-numeric values. The function takes two arguments: df, which is the dataframe to be checked, and var, which is the name of the column in the dataframe to be checked.
+One way to interrogate these values is through the `num_check` function in the [supportR](https://njlyon0.github.io/supportR/articles/supportR.html#quality-control) package.
+
+```{r num_check example}
+num_check(df, 'height_in')
+```
+
+I often find it easier to inspect the entire data record when I come across issues, so I wrote a short function that iterates across columns and pulls out all rows of data that cannot successfully be converted to a numeric value. This function (check_non_numeric) is designed to check if a specified column in a dataframe contains non-numeric values. The function takes two arguments: df, which is the dataframe to be checked, and var, which is the name of the column in the dataframe to be checked.
 
 Copy the function below to use in the next set of code.
 
@@ -83,15 +91,16 @@ Copy the function below to use in the next set of code.
 # @param var variable to check
 # @return data frame with non-numeric values
 check_non_numeric <- function(df, var) {
-  row_probs <- which(!is.na(df[[var]]) & is.na(suppressWarnings(as.numeric(df[[var]]))))
-  if (length(row_probs > 0)) {
+  row_probs <- df %>% filter(.data[[var]] %in% suppressMessages(supportR::num_check(., var)))
+  if (nrow(row_probs > 0)) {
     warning(paste("Check file for", var, "\n"))
-    return(df[row_probs, ])
+    return(row_probs)
   } else {
     cat(paste("all values are numeric for ", var, "\n"))
     return(NULL)
   }
 }
+
 ```
 
 To inspect our data for possible problems in numeric columns, we need to first define all columns that we think should be numeric. Since the majority of the data appear to be numeric, it's often easier to just define which variables are NOT numeric, and test the remaining set.
@@ -114,6 +123,7 @@ for (i in numeric_cols) {
 
 # resulting list will just have the things you still need to check
 names(all_checks)
+
 ```
 
 The function has told use we have some non-numeric values in the variables "height_in" and "planting date". Let's look at what these problems are to determine what to do about them.
@@ -203,8 +213,13 @@ df <- df %>%
     emergence_date = lubridate::ymd(emergence_date)
   ) %>%
   mutate_at(numeric_cols, as.numeric)
+```
+
+Last, we might to view this corrected file and then save it for further downstream analyses. In this case, we'll use this example for the next steps in the tutorial, so I would suggest saving it into the example_data, but with a new name. This is in order to not overwrite the raw data, in the event you find one of your processing steps was wrong and also so that the entire processing chain can be repeated start to finish, if necessary, which can't be done if you save the outputs over the input files for a given step in your analysis.
+
+```{r save output, echo = TRUE}
 
 glimpse(df)
 
-write.csv(df, "example_data/sunflower_data_1.csv", row.names = FALSE)
+write.csv(df, file.path("example_data", "sunflower_data_1.csv"), row.names = FALSE)
 ```

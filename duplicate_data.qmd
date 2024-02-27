@@ -4,25 +4,7 @@ title: "3. Duplicated data"
 
 Sometimes duplicate data are expected, but duplicate data can also occur due to transcription errors or mislabeled samples. Use your knowledge of the sampling design to inform what duplicates you expect!
 
-```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
-# install packages
-packReq <- c(
-  "tidyverse",
-  "summarytools",
-  "janitor"
-)
-
-# Install and load all required packages
-lapply(packReq, function(x) {
-  print(x)
-  if (require(x, character.only = TRUE) == FALSE) {
-    install.packages(x)
-    library(x, character.only = TRUE)
-  }
-})
-```
-
-Load packages
+Load packages.
 
 ```{r load packages, message=FALSE, warning=FALSE}
 library(tidyverse) # general data wrangling
@@ -30,13 +12,13 @@ library(summarytools) # counts complete duplicates
 library(janitor) # finds user defined duplicates
 ```
 
-If you have already completed the [Scrambled data types](data_types.qmd) module you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED can be downloaded [here](http://nwt.colorado.edu/tutorial_example_data/sunflower_data_broken.csv) and tucked into your example_data directory.
+If you have already completed the [Scrambled data types](data_types.qmd) module you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED can be downloaded [here](http://nwt.colorado.edu/tutorial_example_data/sunflower_data_1.csv) and tucked into your example_data directory.
 
 ```{r read data}
-df <- read.csv("example_data/sunflower_data_1.csv")
+df <- read.csv(file.path("example_data", "sunflower_data_1.csv"))
 ```
 
-The [summarytools](https://htmlpreview.github.io/?https://github.com/dcomtois/summarytools/blob/master/doc/introduction.html) package introduced in the [Missing data](missing_data.qmd) module includes information on the number of complete duplicates (all values identical) in our dataset. We can also get this information from one line of code.
+The [summarytools](https://htmlpreview.github.io/?https://github.com/dcomtois/summarytools/blob/master/doc/introduction.html) package introduced in the [Missing data](missing_data.qmd) module includes information on the number of complete duplicates (rows with all values identical) in our dataset. We can also get this information from one line of code.
 
 ```{r ct duplicates, eval = TRUE}
 sum(duplicated(df))

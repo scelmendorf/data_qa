@@ -4,23 +4,18 @@ title: "Setup"
 
 This tutorial relies on a number of published packages. You can install anything you are missing using the code snippet below.
 
-```{r install packages, message=FALSE, warning=FALSE, echo=TRUE, results='hide'}
-# install packages
+```{r install packages, message=FALSE, warning=FALSE, echo=TRUE, results='hide', eval = F}
+# only need to do once
+# install.packages("librarian")
 packReq <- c(
-  "tidyverse", "lubridate", "naniar", "summarytools", "leaflet", "mapview", "datacleanr"
+  "tidyverse", "naniar", "summarytools", "leaflet", "datacleanr", "supportR"
 )
 
-# Install and load all required packages
-lapply(packReq, function(x) {
-  print(x)
-  if (require(x, character.only = TRUE) == FALSE) {
-    install.packages(x)
-    library(x, character.only = TRUE)
-  }
-})
+librarian::shelf(packReq)
+
 ```
 
-We will be working with some example data. To follow along exactly with the paths in this tutorial, you will need to create a folder called 'example_data' and download the following files into that location. The example_data should be within your working directory for Rstudio (if you want to copy and paste code snippets without changing paths).
+We will be working with some example data. To follow along exactly with the paths in this tutorial, you will need to create a folder called 'example_data' and download the following files into that location. The example_data should be within your working directory for Rstudio (if you want to copy and paste code snippets without changing paths). Note you may need to copy the links below into a new browser window to download them, depending on your operating system
 
 [sunflower_data_broken.csv](http://nwt.colorado.edu/tutorial_example_data/sunflower_data_broken.csv)
 
@@ -28,8 +23,6 @@ We will be working with some example data. To follow along exactly with the path
 
 [time_zones.csv](http://nwt.colorado.edu/tutorial_example_data/time_zones.csv)
 
-[sunflower_data_1.csv](http://nwt.colorado.edu/tutorial_example_data/sunflower_data_1.csv)
-
-Last, we will be using the summarytools package. This should work out-of-box for windows users. Mac users may need to install [XQuartz](https://www.xquartz.org) if you haven't already. Linux - I haven't tried - thanks for being the guinea pig and please provide feedback any OS incompatibilities. As with all things R, fighting to get the right things installed is always half the battle...sorry about that! More troubleshooting of installing the summarytools package may be found [here](https://github.com/dcomtois/summarytools/issues/67); more info on getting R to play nicely with Xquartz in general can be found [here](https://cran.r-project.org/bin/macosx/).
+Last, we will be using the summarytools package. This should work out-of-box for windows users. Mac users may need to install [XQuartz](https://www.xquartz.org) if you haven't already. Linux - I haven't tried...Linux users a thanks in advance for being the guinea pigs and please provide feedback any OS incompatibilities. As with all things R, fighting to get the right things installed is always half the battle...sorry about that! More troubleshooting of installing the summarytools package may be found [here](https://github.com/dcomtois/summarytools/issues/67); more info on getting R to play nicely with Xquartz in general can be found [here](https://cran.r-project.org/bin/macosx/).
 
 For today's workshop, I would suggest spending no more than 10 minutes trying to get things installed; if you can't make summarytools work, just work through the rest of the tutorial and/or partner up with a friend whose computer is better behaved and circle back to the install issues afterwards.

@@ -4,32 +4,15 @@ title: "2. Missing data"
 
 Before running an analysis - it's important to check that the data are reasonably complete. Some knowledge of the data collection protocol is generally necessary to know what data are expected. For example, did you head out to the field one day and forget a critical piece of equipment so there are NAs in a particular column? Was it impossible to access the site in 2020 due to COVID restrictions? Or was there a sheet that just didn't get entered and you need to head back to your files and key in those data?
 
-```{r install packages, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
-#install packages
-packReq <- c("tidyverse",
-             "summarytools") 
-
-# Install and load all required packages
-lapply(packReq, function(x) {
-  print(x)
-  if (require(x, character.only = TRUE) == FALSE) {
-    install.packages(x)
-    library(x, character.only = TRUE)
-  }})
-
-```
-
-Load packages
-
 ```{r load packages, message=FALSE, warning=FALSE}
-library (tidyverse) #general data wrangling
-library (summarytools)
+library(tidyverse) # general data wrangling
+library(summarytools) # summarizes missing values per column
 ```
 
-If you have already completed the [Scrambled data types](data_types.qmd) module you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED can be downloaded [here](http://nwt.colorado.edu/tutorial_example_data/sunflower_data_broken.csv) and tucked into your example_data directory.
+If you have already completed the [Scrambled data types](data_types.qmd) module you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED can be downloaded \[here\](http://nwt.colorado.edu/tutorial_example_data/[sunflower_data_1.csv](http://nwt.colorado.edu/tutorial_example_data/sunflower_data_1.csv) and tucked into your example_data directory.
 
 ```{r read data}
-df <-read.csv ('example_data/sunflower_data_1.csv')
+df <-read.csv (file.path("example_data", "sunflower_data_1.csv"))
 
 ```
 
@@ -38,7 +21,7 @@ We will be using the [summarytools](https://cran.r-project.org/web/packages/summ
 *note to mac users, you probably need X quartz installed for the summarytools package to work. And it may crash RStudio from time to time...*
 
 ```{r view summary, eval = FALSE}
-view(dfSummary(df))
+View(dfSummary(df))
 
 ```
 
@@ -53,27 +36,25 @@ print(dfSummary(df,
 
 Knowing more about the intended sampling design will tell us what other missing values should we look for. For example, were data collected every year? If so examining the years included in the dataset may be important.
 
-Sometimes a visual check is easy to spot what is missing
+Sometimes a visual check is easy to spot what is missing.
 
 ```{r check for all years}
 sort (unique (df$year))
 ```
 
-Sometimes it's hard to find exactly what is missing! `setdiff` (for simple checks for expected values based on complete sets) `expand.grid` (for checking pre-defined combinations) and the [padr](https://cran.r-project.org/web/packages/padr/index.html) package (for padding out dataset based on regular temporal frequency) are your friends here. For this dataset, we'll use the simple code below to figure out what years are missing. It is then up to you whether it is important to add those years with NA values, or just carry on knowing they are missing.
+Sometimes it's hard to find exactly what is missing. `setdiff` (for simple checks for expected values based on complete sets) `expand.grid` (for checking pre-defined combinations) and the [padr](https://cran.r-project.org/web/packages/padr/index.html) package (for padding out dataset based on regular temporal frequency) are your friends here. For this dataset, we'll use the simple code below to figure out what years are missing. It is then up to you whether it is important to add those years with NA values to the analysis, go hunt further for the data, or just carry on with the dataset structured as is, but knowing they are missing.
 
 ```{r check for all years using setdiff}
 setdiff(seq(min(df$year), max(df$year)), unique(df$year))
 ```
 
-Commonly, we expect a similar number of samples over some interval (e.g. per site or year)
+Commonly, we expect a similar number of samples over some interval (e.g. per site or year). It can be helpful to calculate summaries of number of records by groups to figure out if the data collection efforts are distributed as expected. Viewing just the first 10 years, the number of data points is highly variable among years, is this expected?
 
 ```{r count by years}
 ct_by_year = df %>%
   group_by(year) %>%
   tally()
 ```
-
-Viewing just the first 10 years, the number of datapoints is highly variable among years, is this expected?
 
 ```{r display ct, echo = FALSE}
 knitr::kable(head (ct_by_year, 10), digits = 2)

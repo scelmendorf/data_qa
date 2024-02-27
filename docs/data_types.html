@@ -246,10 +246,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>This module addresses common errors where string and/or missing data encoded as strings are interwoven with numbers and dates, as well as non-standardized date formatting.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar) <span class="co"># to homogenize missing value codes</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># general data wrangling</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># general data wrangling</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(supportR) <span class="co"># for dealing with non-numeric or non-date values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"example_data/sunflower_data_broken.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">file.path</span>(<span class="st">"example_data"</span>, <span class="st">"sunflower_data_broken.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To understand a little bit about the data, it can be helpful to get a brief summary of the contents</p>
 <div class="cell">
@@ -265,7 +266,7 @@ $ planting_date        &lt;chr&gt; "19970529", "19970529", "19970529", "19970529
 $ yield_lb_acre        &lt;dbl&gt; 2542, 2179, 2510, 2225, 2208, 2326, 2319, 2224, 2…
 $ Year                 &lt;int&gt; 1997, 1997, 1997, 1997, 1997, 1997, 1997, 1997, 1…
 $ Hybrid               &lt;chr&gt; "AP2098", "AP3470", "AK7304", "AK7305", "AK7306",…
-$ emergence_date       &lt;int&gt; 19970531, 19970532, 19970532, 19970533, 19970530,…</code></pre>
+$ emergence_date       &lt;int&gt; 19970533, 19970534, 19970532, 19970532, 19970533,…</code></pre>
 </div>
 </div>
 <p>A glimpse at our dataset tells us something about its structure. Ideally, you are the data collector and already know all of this. The first column (X) appears to be an index variable. Sometimes this is intentional; more often it occurs when people write out files in R and forget to include the <code>row.names = F</code> argument.</p>
@@ -275,39 +276,46 @@ $ emergence_date       &lt;int&gt; 19970531, 19970532, 19970532, 19970533, 19970
 <li>Height (with units inches) is encoded as a character.</li>
 </ol>
 <p>It is very easy to convert everything that <em>should</em> be numeric into a numeric field, but doing this blindly risks wiping out actual data. For example - what if all the low values were entered as ‘below detection level’. Setting all those values to ‘NA’ would bias the results. It’s important to suss out what those mystery values are, and why they are there in the first place.</p>
-<p>There surely is an existing R package that does this more elegantly, but I have yet to discover it. So I wrote a short function that iterates across columns and pulls out all rows of data that cannot successfully be converted to a numeric value. This function (check_non_numeric) is designed to check if a specified column in a dataframe contains non-numeric values. The function takes two arguments: df, which is the dataframe to be checked, and var, which is the name of the column in the dataframe to be checked.</p>
+<p>One way to interrogate these values is through the <code>num_check</code> function in the <a href="https://njlyon0.github.io/supportR/articles/supportR.html#quality-control">supportR</a> package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">num_check</span>(df, <span class="st">'height_in'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "na"  "N/A"</code></pre>
+</div>
+</div>
+<p>I often find it easier to inspect the entire data record when I come across issues, so I wrote a short function that iterates across columns and pulls out all rows of data that cannot successfully be converted to a numeric value. This function (check_non_numeric) is designed to check if a specified column in a dataframe contains non-numeric values. The function takes two arguments: df, which is the dataframe to be checked, and var, which is the name of the column in the dataframe to be checked.</p>
 <p>Copy the function below to use in the next set of code.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to find non-numeric values in a column and inspect</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># @param df data frame</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># @param var variable to check</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># @return data frame with non-numeric values</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>check_non_numeric <span class="ot">&lt;-</span> <span class="cf">function</span>(df, var) {</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  row_probs <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="sc">!</span><span class="fu">is.na</span>(df[[var]]) <span class="sc">&amp;</span> <span class="fu">is.na</span>(<span class="fu">suppressWarnings</span>(<span class="fu">as.numeric</span>(df[[var]]))))</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(row_probs <span class="sc">&gt;</span> <span class="dv">0</span>)) {</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">warning</span>(<span class="fu">paste</span>(<span class="st">"Check file for"</span>, var, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(df[row_probs, ])</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="fu">paste</span>(<span class="st">"all values are numeric for "</span>, var, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to find non-numeric values in a column and inspect</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># @param df data frame</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># @param var variable to check</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># @return data frame with non-numeric values</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>check_non_numeric <span class="ot">&lt;-</span> <span class="cf">function</span>(df, var) {</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  row_probs <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(.data[[var]] <span class="sc">%in%</span> <span class="fu">suppressMessages</span>(supportR<span class="sc">::</span><span class="fu">num_check</span>(., var)))</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">nrow</span>(row_probs <span class="sc">&gt;</span> <span class="dv">0</span>)) {</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">warning</span>(<span class="fu">paste</span>(<span class="st">"Check file for"</span>, var, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(row_probs)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="fu">paste</span>(<span class="st">"all values are numeric for "</span>, var, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>))</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To inspect our data for possible problems in numeric columns, we need to first define all columns that we think should be numeric. Since the majority of the data appear to be numeric, it’s often easier to just define which variables are NOT numeric, and test the remaining set.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define numeric columns as all of those that aren't non-numeric</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>non_numeric_cols <span class="ot">&lt;-</span> <span class="st">"Hybrid"</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>numeric_cols <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(df), non_numeric_cols)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define numeric columns as all of those that aren't non-numeric</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>non_numeric_cols <span class="ot">&lt;-</span> <span class="st">"Hybrid"</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>numeric_cols <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(df), non_numeric_cols)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can now iterate over all the columns we think should contain numeric data and look for problems.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set up a list to put numeric check results into</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>all_checks <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> numeric_cols) {</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  all_checks[[i]] <span class="ot">&lt;-</span> <span class="fu">check_non_numeric</span>(df, i)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set up a list to put numeric check results into</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>all_checks <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> numeric_cols) {</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  all_checks[[i]] <span class="ot">&lt;-</span> <span class="fu">check_non_numeric</span>(df, i)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>all values are numeric for  X 
 all values are numeric for  harvest_date 
@@ -324,15 +332,15 @@ all values are numeric for  harvest_moisture_pct </code></pre>
 all values are numeric for  Year 
 all values are numeric for  emergence_date </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># resulting list will just have the things you still need to check</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(all_checks)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># resulting list will just have the things you still need to check</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(all_checks)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "height_in"     "planting_date"</code></pre>
 </div>
 </div>
 <p>The function has told use we have some non-numeric values in the variables “height_in” and “planting date”. Let’s look at what these problems are to determine what to do about them.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(all_checks[[<span class="st">"height_in"</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(all_checks[[<span class="st">"height_in"</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
@@ -340,7 +348,6 @@ all values are numeric for  emergence_date </code></pre>
 <table>
  <thead>
   <tr>
-   <th style="text-align:left;">   </th>
    <th style="text-align:right;"> X </th>
    <th style="text-align:right;"> harvest_date </th>
    <th style="text-align:right;"> harvest_moisture_pct </th>
@@ -354,7 +361,6 @@ all values are numeric for  emergence_date </code></pre>
  </thead>
 <tbody>
   <tr>
-   <td style="text-align:left;"> 40 </td>
    <td style="text-align:right;"> 40 </td>
    <td style="text-align:right;"> 19970930 </td>
    <td style="text-align:right;"> 9.5 </td>
@@ -363,10 +369,9 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 2381 </td>
    <td style="text-align:right;"> 1997 </td>
    <td style="text-align:left;"> ST2117 </td>
-   <td style="text-align:right;"> 19970539 </td>
+   <td style="text-align:right;"> 19970532 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 475 </td>
    <td style="text-align:right;"> 475 </td>
    <td style="text-align:right;"> 20021031 </td>
    <td style="text-align:right;"> 13.3 </td>
@@ -375,7 +380,7 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 2008 </td>
    <td style="text-align:right;"> 2002 </td>
    <td style="text-align:left;"> F00001 </td>
-   <td style="text-align:right;"> 20020532 </td>
+   <td style="text-align:right;"> 20020534 </td>
   </tr>
 </tbody>
 </table>
@@ -384,15 +389,15 @@ all values are numeric for  emergence_date </code></pre>
 </div>
 <p>We can see from the above there are two different missing value codes included in the height column. Having confidence in the issues, we can now set those to a proper missing value code. Here I’m going to run on the assumption that these two missing value codes may be found elsewhere, and replace them everywhere using the <code>replace_with_na_all</code> function. Note we could have also addressed this by defining multiple missing value codes when we initially read in the data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># replace non-standard missing value codes</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">replace_with_na_all</span>(</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">condition =</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="sc">~</span> .x <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"N/A"</span>, <span class="st">"na"</span>)</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># replace non-standard missing value codes</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">replace_with_na_all</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">condition =</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="sc">~</span> .x <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"N/A"</span>, <span class="st">"na"</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Next, let’s inspect the planting date problems.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(all_checks[[<span class="st">"planting_date"</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(all_checks[[<span class="st">"planting_date"</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
@@ -400,7 +405,6 @@ all values are numeric for  emergence_date </code></pre>
 <table>
  <thead>
   <tr>
-   <th style="text-align:left;">   </th>
    <th style="text-align:right;"> X </th>
    <th style="text-align:right;"> harvest_date </th>
    <th style="text-align:right;"> harvest_moisture_pct </th>
@@ -414,7 +418,6 @@ all values are numeric for  emergence_date </code></pre>
  </thead>
 <tbody>
   <tr>
-   <td style="text-align:left;"> 867 </td>
    <td style="text-align:right;"> 867 </td>
    <td style="text-align:right;"> 20101021 </td>
    <td style="text-align:right;"> 11.7 </td>
@@ -423,10 +426,9 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 1032 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F30008NS,CL </td>
-   <td style="text-align:right;"> 20100525 </td>
+   <td style="text-align:right;"> 20100522 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 868 </td>
    <td style="text-align:right;"> 868 </td>
    <td style="text-align:right;"> 20101021 </td>
    <td style="text-align:right;"> 8.2 </td>
@@ -438,7 +440,6 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 20100523 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 869 </td>
    <td style="text-align:right;"> 869 </td>
    <td style="text-align:right;"> 20101021 </td>
    <td style="text-align:right;"> 8.6 </td>
@@ -450,7 +451,6 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 20100523 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 870 </td>
    <td style="text-align:right;"> 870 </td>
    <td style="text-align:right;"> 20101021 </td>
    <td style="text-align:right;"> 9.4 </td>
@@ -459,10 +459,9 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 1354 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F51139NS,DM,CL </td>
-   <td style="text-align:right;"> 20100521 </td>
+   <td style="text-align:right;"> 20100522 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 871 </td>
    <td style="text-align:right;"> 871 </td>
    <td style="text-align:right;"> 20101021 </td>
    <td style="text-align:right;"> 11.0 </td>
@@ -471,10 +470,9 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 1236 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F51313NS,DM,CL </td>
-   <td style="text-align:right;"> 20100525 </td>
+   <td style="text-align:right;"> 20100524 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 872 </td>
    <td style="text-align:right;"> 872 </td>
    <td style="text-align:right;"> 20101021 </td>
    <td style="text-align:right;"> 9.3 </td>
@@ -483,10 +481,9 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 664 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F89036NS,DM,CL </td>
-   <td style="text-align:right;"> 20100523 </td>
+   <td style="text-align:right;"> 20100522 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 873 </td>
    <td style="text-align:right;"> 873 </td>
    <td style="text-align:right;"> 20101021 </td>
    <td style="text-align:right;"> 10.0 </td>
@@ -495,10 +492,9 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 230 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F89057NS,SU </td>
-   <td style="text-align:right;"> 20100522 </td>
+   <td style="text-align:right;"> 20100521 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 874 </td>
    <td style="text-align:right;"> 874 </td>
    <td style="text-align:right;"> 20101021 </td>
    <td style="text-align:right;"> 8.4 </td>
@@ -507,10 +503,9 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 1153 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> F91033NS,SU </td>
-   <td style="text-align:right;"> 20100523 </td>
+   <td style="text-align:right;"> 20100522 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 875 </td>
    <td style="text-align:right;"> 875 </td>
    <td style="text-align:right;"> 20101021 </td>
    <td style="text-align:right;"> 9.9 </td>
@@ -519,10 +514,9 @@ all values are numeric for  emergence_date </code></pre>
    <td style="text-align:right;"> 759 </td>
    <td style="text-align:right;"> 2010 </td>
    <td style="text-align:left;"> 306 DMR NS </td>
-   <td style="text-align:right;"> 20100526 </td>
+   <td style="text-align:right;"> 20100522 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> 876 </td>
    <td style="text-align:right;"> 876 </td>
    <td style="text-align:right;"> 20101021 </td>
    <td style="text-align:right;"> 8.5 </td>
@@ -540,7 +534,7 @@ all values are numeric for  emergence_date </code></pre>
 </div>
 <p>It appears that some of the data have dates entered as M/D/YYYY. To determine what to do about this, we need to see all the date formats that can be encountered.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(<span class="fu">sort</span>(df[[<span class="st">"planting_date"</span>]], <span class="at">decreasing =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(<span class="fu">sort</span>(df[[<span class="st">"planting_date"</span>]], <span class="at">decreasing =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
@@ -589,13 +583,13 @@ all values are numeric for  emergence_date </code></pre>
 </div>
 <p>In this dataset, sometimes the date is encoded as an 8 digit integer YYYYMMDD while others have M/D/YYYY. Based on this information, we can use the lubridate package to interpret the dates entered in either format, and then consolidate into a single, proper date column. You will get some warnings! This is to be expected as we know that the date formatting differs among rows.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">planting_date_original =</span> planting_date) <span class="sc">%&gt;%</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">yyyymmdd =</span> lubridate<span class="sc">::</span><span class="fu">ymd</span>(planting_date_original),</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mdy =</span> lubridate<span class="sc">::</span><span class="fu">mdy</span>(planting_date_original),</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">planting_date_corrected =</span> <span class="fu">coalesce</span>(yyyymmdd, mdy)</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">planting_date_original =</span> planting_date) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">yyyymmdd =</span> lubridate<span class="sc">::</span><span class="fu">ymd</span>(planting_date_original),</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mdy =</span> lubridate<span class="sc">::</span><span class="fu">mdy</span>(planting_date_original),</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">planting_date_corrected =</span> <span class="fu">coalesce</span>(yyyymmdd, mdy)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: There were 2 warnings in `mutate()`.
 The first warning was:
@@ -607,11 +601,11 @@ Caused by warning:
 </div>
 <p>Always check your work!!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># always check your work</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(df <span class="sc">%&gt;%</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2008</span><span class="sc">:</span><span class="dv">2012</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(planting_date_original, planting_date_corrected) <span class="sc">%&gt;%</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># always check your work</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(df <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2008</span><span class="sc">:</span><span class="dv">2012</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(planting_date_original, planting_date_corrected) <span class="sc">%&gt;%</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
@@ -647,28 +641,31 @@ Caused by warning:
 </div>
 <p>Finally, we can remove the temporary columns we created, and set all our remaining columns to the correct column types.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># re define numeric columns - this time leaving off date</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>numeric_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"harvest_moisture_pct"</span>, <span class="st">"height_in"</span>, <span class="st">"yield_lb_acre"</span>)</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>yyyymmdd, <span class="sc">-</span>mdy, <span class="sc">-</span>planting_date_original, <span class="sc">-</span>X) <span class="sc">%&gt;%</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">planting_date =</span> planting_date_corrected) <span class="sc">%&gt;%</span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># while we are at it let's rename everything to lower case as</span></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># variable capitalization is annoying and hard to remember</span></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(tolower) <span class="sc">%&gt;%</span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># set harvest_date to a date rather than an integer</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">harvest_date =</span> lubridate<span class="sc">::</span><span class="fu">ymd</span>(harvest_date),</span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">emergence_date =</span> lubridate<span class="sc">::</span><span class="fu">ymd</span>(emergence_date)</span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(numeric_cols, as.numeric)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># re define numeric columns - this time leaving off date</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>numeric_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"harvest_moisture_pct"</span>, <span class="st">"height_in"</span>, <span class="st">"yield_lb_acre"</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>yyyymmdd, <span class="sc">-</span>mdy, <span class="sc">-</span>planting_date_original, <span class="sc">-</span>X) <span class="sc">%&gt;%</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">planting_date =</span> planting_date_corrected) <span class="sc">%&gt;%</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># while we are at it let's rename everything to lower case as</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># variable capitalization is annoying and hard to remember</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_all</span>(tolower) <span class="sc">%&gt;%</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># set harvest_date to a date rather than an integer</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">harvest_date =</span> lubridate<span class="sc">::</span><span class="fu">ymd</span>(harvest_date),</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">emergence_date =</span> lubridate<span class="sc">::</span><span class="fu">ymd</span>(emergence_date)</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(numeric_cols, as.numeric)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: There was 1 warning in `mutate()`.
 ℹ In argument: `emergence_date = lubridate::ymd(emergence_date)`.
 Caused by warning:
-!  275 failed to parse.</code></pre>
+!  266 failed to parse.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Last, we might to view this corrected file and then save it for further downstream analyses. In this case, we’ll use this example for the next steps in the tutorial, so I would suggest saving it into the example_data, but with a new name. This is in order to not overwrite the raw data, in the event you find one of your processing steps was wrong and also so that the entire processing chain can be repeated start to finish, if necessary, which can’t be done if you save the outputs over the input files for a given step in your analysis.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 2,685
 Columns: 8
@@ -678,10 +675,10 @@ $ height_in            &lt;dbl&gt; 57, 62, 56, 60, 58, 58, 66, 60, 60, 54, 54, 6
 $ yield_lb_acre        &lt;dbl&gt; 2542, 2179, 2510, 2225, 2208, 2326, 2319, 2224, 2…
 $ year                 &lt;int&gt; 1997, 1997, 1997, 1997, 1997, 1997, 1997, 1997, 1…
 $ hybrid               &lt;chr&gt; "AP2098", "AP3470", "AK7304", "AK7305", "AK7306",…
-$ emergence_date       &lt;date&gt; 1997-05-31, NA, NA, NA, 1997-05-30, 1997-05-31, …
+$ emergence_date       &lt;date&gt; NA, NA, NA, NA, NA, 1997-05-30, NA, NA, NA, 1997…
 $ planting_date        &lt;date&gt; 1997-05-29, 1997-05-29, 1997-05-29, 1997-05-29, …</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(df, <span class="st">"example_data/sunflower_data_1.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(df, <span class="fu">file.path</span>(<span class="st">"example_data"</span>, <span class="st">"sunflower_data_1.csv"</span>), <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
@@ -783,6 +780,20 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return popup.innerHTML;
     });
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+    var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+      }
+    }
 });
 </script>
 <nav class="page-navigation">

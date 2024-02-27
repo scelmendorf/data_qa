@@ -12,30 +12,67 @@ With this workflow a simple one line of code such as `source('clean_my_data.R')`
 
 I usually include a function to generate a series of plots appropriate to the dataset in hand as part of this scripted workflow. Sometimes no amount of logic checks can illuminate the possible problems you might encounter as much as a visual aid can.
 
-Some tips: plotting this year's data on top of last year's data, or coloring points by location, data collector, etc can help spot errors due to changes in protocols, sensor swaps, or miskeyed data.
+Some tips: plotting this year's data on top of last year's data, or coloring points by location, data collector, etc. can help spot errors due to changes in protocols, sensor swaps, or miskeyed data.
 
-When I have multiple variables to look through, I usually prefer to set up a common type of plot, iterate through all the variables, and dump the results into a pdf that I can flip through later or share with collaborators rather than viewing things only in Rstudio's plot window, or having a zillion .jpgs to flip through. An example script would correct all the typos/date formatting etc as we have done already, write out a final file for analysis and plot all the variables
+When I have multiple variables to look through, I usually prefer to set up a common type of plot, iterate through all the variables, and dump the results into a pdf that I can flip through later or share with collaborators rather than viewing things only in Rstudio's plot window, or having a zillion .jpgs to flip through. An example script would correct all the typos/date formatting etc as we have done already, plot all the variables, and write out a final file for analysis.
 
 ```{r plots to pdf, message=FALSE, warning=FALSE}
-library (tidyverse)
-df <-read.csv ('example_data/sunflower_data_1.csv') %>%
-  mutate(planting_date = lubridate::ymd(planting_date),
-         harvest_date = lubridate::ymd(harvest_date),
-         emergence_date = lubridate::ymd(emergence_date))
+library(tidyverse)
+library(naniar) # to homogenize missing value codes
 
-write.csv(df, 'analysis_ready_data/sunflower_data.csv')
+df <- read_csv(file.path("example_data", "sunflower_data_broken.csv"))
 
-#plot all
+# insert all the corrections you have discovered you needed through
+# the interactive work and carefully checked
+df <- df %>%
+  # replace non-standard missing value codes
+  replace_with_na_all(
+    condition =
+      ~ .x %in% c("N/A", "na")
+  ) %>%
+  # fix planting dates
+  rename(planting_date_original = planting_date) %>%
+  mutate(
+    yyyymmdd = lubridate::ymd(planting_date_original),
+    mdy = lubridate::mdy(planting_date_original),
+    planting_date_corrected = coalesce(yyyymmdd, mdy)
+  ) %>%
+  select(-yyyymmdd, -mdy, -planting_date_original) %>%
+  rename(planting_date = planting_date_corrected) %>%
+  # while we are at it let's rename everything to lower case as
+  # variable capitalization is annoying and hard to remember
+  rename_all(tolower) %>%
+  # set harvest_date to a date rather than an integer
+  mutate(
+    harvest_date = lubridate::ymd(harvest_date),
+    emergence_date = lubridate::ymd(emergence_date)
+  )
+
+
+# define numeric columns
 non_numeric_cols <- "hybrid"
 numeric_cols <- setdiff(names(df), non_numeric_cols)
 
+df <- df %>% mutate_at(numeric_cols, as.numeric) %>%
+  # remove duplicates
+  distinct() %>%
+  # fix spelling
+  mutate(hybrid = gsub("\\s+", "", hybrid))
+# add on whatever additional steps you discovered through interactive qc here
 
-#remember to make a figures directory first
+
+write.csv(df, "analysis_ready_data/sunflower_data.csv")
+
+
+# remember to make a figures directory first
 pdf("figures/qcplots.pdf", 7, 5)
 for (var in numeric_cols) {
-#df$var <- df[[var]] # this should work but I think hates the spaces? # myplot = ggplot(mydata, aes(x= !!var))+
-# quick glance at the time series while you have the sheets in hand
-myplot <- ggplot(df, aes( y = .data[[var]], x = year, color = hybrid )) + geom_jitter(width = 0.2, height = 0, show.legend = FALSE) + ylab(var) 
-print(myplot) }
+  # df$var <- df[[var]] # this should work but I think hates the spaces? # myplot = ggplot(mydata, aes(x= !!var))+
+  # quick glance at the time series while you have the sheets in hand
+  myplot <- ggplot(df, aes(y = .data[[var]], x = year, color = hybrid)) +
+    geom_jitter(width = 0.2, height = 0, show.legend = FALSE) +
+    ylab(var)
+  print(myplot)
+}
 dev.off()
 ```

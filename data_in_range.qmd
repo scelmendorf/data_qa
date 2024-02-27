@@ -12,7 +12,7 @@ library(summarytools)
 If you have already completed the [Scrambled data types](data_types.qmd) module you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED can be downloaded [here](http://nwt.colorado.edu/tutorial_example_data/sunflower_data_broken.csv) and tucked into your example_data directory.
 
 ```{r read data}
-df <- read.csv("example_data/sunflower_data_1.csv")
+df <- read.csv(file.path("example_data", "sunflower_data_1.csv"))
 ```
 
 We can use the tidyverse package to make ourselves a quick table of ranges to scan.
@@ -20,14 +20,14 @@ We can use the tidyverse package to make ourselves a quick table of ranges to sc
 ```{r table data ranges}
 # This code reads a dataframe 'df' and selects only the numeric columns. It then pivots the
 # data into a longer format, groups by the column names, and summarizes the minimum and
-# maximum values for each column. The resulting output is a dataframe with two columns:
-# 'name' and 'value', where 'name' is the column name and 'value' is a list containing
-# the minimum and maximum values for that column.
+# maximum values for each column. 
+
 min_max <- df %>%
   select(where(is.numeric)) %>%
   pivot_longer(cols = everything()) %>%
   group_by(name) %>%
-  summarize_at("value", list(min = ~ min(.x, na.rm = TRUE), max = ~ max(.x, na.rm = TRUE)))
+  summarize(across("value", list(min = ~ min(.x, na.rm = TRUE), max = ~ max(.x, na.rm = TRUE))))
+
 ```
 
 ```{r display data ranges, echo = FALSE}

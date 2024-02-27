@@ -25,10 +25,10 @@ df <- df %>%
 write.csv(df, "example_data/time_zones.csv", row.names = FALSE)
 ```
 
-We'll start by reading some sensor data from Niwot Ridge and doing a quick inspection as to what variables might clue us into the time zone.
+We'll start by reading some sensor data from Niwot Ridge and doing a quick inspection as to what variables might clue us into the time zone we had set our loggers in.
 
 ```{r read data}
-df <- read.csv("example_data/time_zones.csv") %>%
+df <- read.csv(file.path("example_data", "time_zones.csv")) %>%
   mutate(date_time = lubridate::ymd_hms(date_time))
 
 glimpse(df)
@@ -70,3 +70,8 @@ ggplot(head(df, 40), aes(x = date_time, y = temperature, color = "black")) +
     guide = "legend"
   )
 ```
+
+When working with sensor data from multiple sites or collections - I often find
+it helpful to plot the sensors from each location overtop eachother and/or
+plot data from different years on the same plot. This can quickly identify
+sensors that were set to different time zones.

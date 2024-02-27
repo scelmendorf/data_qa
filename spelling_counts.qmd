@@ -102,7 +102,7 @@ df_space_removal <- df %>%
 dup_check <- janitor::get_dupes(df_space_removal, hybrid_no_space)
 ```
 
-Before applying this we want to check that all sets of names we have 'combined' make sense. You would want to check the whole list, but just a few are displayed here for brevity. Using the `get_dupes` function we can see how multiple spacings have been removed, and check whether what we have done was sensible.
+Before applying this we want to check that all sets of names we have 'combined' make sense. You would want to check the whole list, but just a few are displayed here for brevity. Using the `get_dupes` function we can see how after running our whitespace removal above has combined the names on the right (hybrid) into like categories without the spelling variants (hybrid_no_space). We can scan down this list to make sure the resulting sets are what we intended to check whether what we have done was sensible. Regular expressions are a powerful tool for editing and correcting string variables, but in my experience can take some trial and error to get right.
 
 ```{r display space changes, echo = FALSE}
 knitr::kable(head(dup_check, 20))

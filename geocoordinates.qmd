@@ -18,7 +18,7 @@ write.csv(df, "example_data/geocoordinates_example.csv", row.names = F)
 ```
 
 ```{r read data}
-df <- read.csv("example_data/geocoordinates_example.csv")
+df <- read.csv(file.path("example_data", "geocoordinates_example.csv"))
 ```
 
 Many of the tricks in we learned in [Data in range](data_in_range.qmd) also apply here, but sometimes there is no substitute for a map. We can make a basic map using ggplot.
@@ -96,7 +96,6 @@ map <- leaflet::leaflet() %>%
     weight = 1,
     fillOpacity = 1
   )
-# mapview::mapshot(x = map, file = "figures/example_geocations.png")
 ```
 
 ![](figures/figures/example_geocations.png)
@@ -105,4 +104,4 @@ You may ask yourself - did I sample in Asia? If not, quite likely some of your l
 
 ![](figures/us-verbatim.png)
 
-Images courtesy of the developers at GBIF, who have corrected this problem. You can read more about it [here](https://gbif.blogspot.com/2011/05/here-be-dragons-mapping-occurrence-data.html).
+Image courtesy of the developers at GBIF, who have corrected this problem. You can read more about it [here](https://gbif.blogspot.com/2011/05/here-be-dragons-mapping-occurrence-data.html).

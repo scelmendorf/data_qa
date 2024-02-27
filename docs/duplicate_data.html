@@ -209,7 +209,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./datacleanr.html" class="sidebar-item-text sidebar-link">10. Interactive data qa and data viz (Shiny apps)</a>
+  <a href="./datacleanr.html" class="sidebar-item-text sidebar-link">10. Interactive data qc and data viz (Shiny apps)</a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -244,20 +244,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </header>
 
 <p>Sometimes duplicate data are expected, but duplicate data can also occur due to transcription errors or mislabeled samples. Use your knowledge of the sampling design to inform what duplicates you expect!</p>
-<div class="cell">
-
-</div>
-<p>Load packages</p>
+<p>Load packages.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># general data wrangling</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(summarytools) <span class="co"># counts complete duplicates</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor) <span class="co"># finds user defined duplicates</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>If you have already completed the <a href="./data_types.html">Scrambled data types</a> module you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED can be downloaded <a href="http://nwt.colorado.edu/tutorial_example_data/sunflower_data_broken.csv">here</a> and tucked into your example_data directory.</p>
+<p>If you have already completed the <a href="./data_types.html">Scrambled data types</a> module you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED can be downloaded <a href="http://nwt.colorado.edu/tutorial_example_data/sunflower_data_1.csv">here</a> and tucked into your example_data directory.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"example_data/sunflower_data_1.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">file.path</span>(<span class="st">"example_data"</span>, <span class="st">"sunflower_data_1.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The <a href="https://htmlpreview.github.io/?https://github.com/dcomtois/summarytools/blob/master/doc/introduction.html">summarytools</a> package introduced in the <a href="./missing_data.html">Missing data</a> module includes information on the number of complete duplicates (all values identical) in our dataset. We can also get this information from one line of code.</p>
+<p>The <a href="https://htmlpreview.github.io/?https://github.com/dcomtois/summarytools/blob/master/doc/introduction.html">summarytools</a> package introduced in the <a href="./missing_data.html">Missing data</a> module includes information on the number of complete duplicates (rows with all values identical) in our dataset. We can also get this information from one line of code.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">duplicated</span>(df))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -338,7 +335,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td style="text-align: right;">15.60</td>
 <td style="text-align: right;">59.00</td>
 <td style="text-align: right;">1921.00</td>
-<td style="text-align: left;">2000-06-06</td>
+<td style="text-align: left;">2000-06-07</td>
 <td style="text-align: left;">2000-06-02</td>
 </tr>
 <tr class="even">
@@ -349,7 +346,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td style="text-align: right;">13.30</td>
 <td style="text-align: right;">60.00</td>
 <td style="text-align: right;">2112.00</td>
-<td style="text-align: left;">2000-06-06</td>
+<td style="text-align: left;">2000-06-07</td>
 <td style="text-align: left;">2000-06-02</td>
 </tr>
 <tr class="odd">
@@ -382,7 +379,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td style="text-align: right;">6.89</td>
 <td style="text-align: right;">60.04</td>
 <td style="text-align: right;">1522.60</td>
-<td style="text-align: left;">2016-05-29</td>
+<td style="text-align: left;">2016-05-31</td>
 <td style="text-align: left;">2016-05-27</td>
 </tr>
 <tr class="even">
@@ -393,7 +390,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td style="text-align: right;">7.71</td>
 <td style="text-align: right;">58.07</td>
 <td style="text-align: right;">1683.70</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2016-05-30</td>
 <td style="text-align: left;">2016-05-27</td>
 </tr>
 </tbody>
@@ -506,6 +503,20 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return popup.innerHTML;
     });
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+    var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+      }
+    }
 });
 </script>
 <nav class="page-navigation">
