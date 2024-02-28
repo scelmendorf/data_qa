@@ -9,7 +9,7 @@ library(tidyverse) # general data wrangling
 library(summarytools) # summarizes missing values per column
 ```
 
-If you have already completed the [Scrambled data types](data_types.qmd) module you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED can be downloaded \[here\](http://nwt.colorado.edu/tutorial_example_data/[sunflower_data_1.csv](http://nwt.colorado.edu/tutorial_example_data/sunflower_data_1.csv) and tucked into your example_data directory.
+If you have already completed the [Scrambled data types](data_types.qmd) module you will have created this file. For those who prefer to jump in at the middle, the original dataset with mis-entered dates and missing value codes FIXED can be downloaded [here](./example_data/sunflower_data_1.csv) and tucked into your example_data directory.
 
 ```{r read data}
 df <-read.csv (file.path("example_data", "sunflower_data_1.csv"))

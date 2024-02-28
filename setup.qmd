@@ -17,11 +17,12 @@ librarian::shelf(packReq)
 
 We will be working with some example data. To follow along exactly with the paths in this tutorial, you will need to create a folder called 'example_data' and download the following files into that location. The example_data should be within your working directory for Rstudio (if you want to copy and paste code snippets without changing paths). Note you may need to copy the links below into a new browser window to download them, depending on your operating system
 
-[sunflower_data_broken.csv](http://nwt.colorado.edu/tutorial_example_data/sunflower_data_broken.csv)
+[sunflower_data_broken.csv](./example_data/sunflower_data_broken.csv)
 
-[geocoordinates_example.csv](http://nwt.colorado.edu/tutorial_example_data/geocoordinates_example.csv)
+[geocoordinates_example.csv](./example_data/geocoordinates_example.csv)
 
-[time_zones.csv](http://nwt.colorado.edu/tutorial_example_data/time_zones.csv)
+[time_zones.csv](./example_data/time_zones.csv)
+
 
 Last, we will be using the summarytools package. This should work out-of-box for windows users. Mac users may need to install [XQuartz](https://www.xquartz.org) if you haven't already. Linux - I haven't tried...Linux users a thanks in advance for being the guinea pigs and please provide feedback any OS incompatibilities. As with all things R, fighting to get the right things installed is always half the battle...sorry about that! More troubleshooting of installing the summarytools package may be found [here](https://github.com/dcomtois/summarytools/issues/67); more info on getting R to play nicely with Xquartz in general can be found [here](https://cran.r-project.org/bin/macosx/).
 
