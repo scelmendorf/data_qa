@@ -21,7 +21,7 @@ We will be using the [summarytools](https://cran.r-project.org/web/packages/summ
 *note to mac users, you probably need X quartz installed for the summarytools package to work. And it may crash RStudio from time to time...*
 
 ```{r view summary, eval = FALSE}
-View(dfSummary(df))
+view(dfSummary(df))
 
 ```
 
